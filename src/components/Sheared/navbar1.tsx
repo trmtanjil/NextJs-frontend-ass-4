@@ -23,7 +23,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import Link from "next/link";
-import { ModeToggle } from "../ModeToggle";
+import { ModeToggle } from "../layout/ModeToggle";
 
 interface MenuItem {
   title: string;
@@ -83,10 +83,7 @@ const Navbar = ({
       title:"deshboard",
       url:"/deshboard"
     },
-      {
-      title:"Prectice",
-      url:"/prectice"
-    }
+   
   ],
   auth = {
     login: { title: "Login", url: "/login" },
