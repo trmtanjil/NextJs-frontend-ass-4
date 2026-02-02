@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { userService } from "@/service/user.service";
+import { userService } from "@/services/user.service";
    
 export default async function Home() {
 
