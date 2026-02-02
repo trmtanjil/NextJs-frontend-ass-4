@@ -1,120 +1,139 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { authClient } from "@/lib/auth-client";
+import { Label } from "@/components/ui/label";
+ 
+export default function LoginForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-interface Login1Props {
-  heading?: string;
-  logo?: {
-    url: string;
-    src: string;
-    alt: string;
-    title?: string;
-    className?: string;
+  const session = authClient.useSession();
+
+  // Email + Password Login
+  const handleLogin = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await authClient.signIn.email({
+        email,
+        password,
+      });
+
+      if (res.error) {
+        setError(error);
+      }
+    } catch (err) {
+      setError("Login failed");
+    } finally {
+      setLoading(false);
+    }
   };
-  buttonText?: string;
-  googleText?: string;
-  signupText?: string;
-  signupUrl?: string;
-  className?: string;
-  onGoogleLogin?: () => void; // গুগল লগইনের জন্য নতুন প্রপ
-}
 
-const Login1 = ({
-  heading = "Login",
-  logo = {
-    url: "https://www.shadcnblocks.com",
-    src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-wordmark.svg",
-    alt: "logo",
-    title: "shadcnblocks.com",
-  },
-  buttonText = "Login",
-  googleText = "Continue with Google", // ডিফল্ট টেক্সট
-  signupText = "Need an account?",
-  signupUrl = "https://shadcnblocks.com",
-  className,
- }: Login1Props) => {
+  //  Google Login
+  const handleGoogleLogin = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+    });
+  };
 
-  const handleGoogle = async ()=>{
-    const data = await authClient.signIn.social({
-      provider:"google",
-       callbackURL: "http://localhost:3000",
-    })
-    console.log(data)
-  } 
-  const session = authClient.useSession()
-  console.log(session)
+  if (session.isPending) {
+    return <p className="text-center mt-10">Loading...</p>;
+  }
 
-  return (
-    <section className={cn("h-screen bg-muted", className)}>
-      <div className="flex h-full items-center justify-center">
-        {/* Logo and Form Container */}
-        <div className="flex flex-col items-center gap-6 lg:justify-start">
-          <a href={logo.url}>
-            <img
-              src={logo.src}
-              alt={logo.alt}
-              title={logo.title}
-              className="h-10 dark:invert"
-            />
-          </a>
-          
-          <div className="flex w-full max-w-sm min-w-sm flex-col items-center gap-y-4 rounded-md border border-muted bg-background px-6 py-8 shadow-md">
-            {heading && <h1 className="text-xl font-semibold">{heading}</h1>}
-            
-            <Input
-              type="email"
-              placeholder="Email"
-              className="text-sm"
-              required
-            />
-            <Input
-              type="password"
-              placeholder="Password"
-              className="text-sm"
-              required
-            />
-            
-            <Button type="submit" className="w-full">
-              {buttonText}
-            </Button>
-
-            {/* --- Divider --- */}
-            <div className="relative flex w-full items-center py-2">
-              <div className="flex-grow border-t border-muted"></div>
-              <span className="mx-2 text-xs uppercase text-muted-foreground">Or</span>
-              <div className="flex-grow border-t border-muted"></div>
-            </div>
-
-            {/* --- Google Login Button --- */}
-            <Button 
-              variant="outline" 
-              type="button" 
-              className="w-full"
-              onClick={()=>handleGoogle()} // বাটন ক্লিক করলে এই ফাংশনটি কল হবে
-            >
-              <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
-                <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
-              </svg>
-              {googleText}
-            </Button>
-          </div>
-
-          <div className="flex justify-center gap-1 text-sm text-muted-foreground">
-            <p>{signupText}</p>
-            <a
-              href={signupUrl}
-              className="font-medium text-primary hover:underline"
-            >
-              Sign up
-            </a>
-          </div>
+  if (session.data?.user) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="rounded-lg border p-6 text-center">
+          <h2 className="text-xl font-semibold">
+            Welcome, {session.data.user.email}
+          </h2>
+          <Button
+            className="mt-4"
+            onClick={() => authClient.signOut()}
+          >
+            Logout
+          </Button>
         </div>
       </div>
-    </section>
-  );
-};
+    );
+  }
 
-export { Login1 };
+  return (
+    <div className="flex h-screen items-center justify-center bg-muted px-4">
+      <div className="w-full max-w-sm rounded-lg border bg-background p-6 shadow">
+        <h1 className="mb-6 text-center text-2xl font-semibold">
+          Login
+        </h1>
+
+        {/* Email */}
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="example@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+
+        {/* Password */}
+        <div className="mt-4 space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+
+        {/* Error */}
+        {error && (
+          <p className="mt-3 text-sm text-red-500">{error}</p>
+        )}
+
+        {/* Login Button */}
+        <Button
+          className="mt-6 w-full"
+          onClick={handleLogin}
+          disabled={loading}
+        >
+          {loading ? "Logging in..." : "Login"}
+        </Button>
+
+        {/* Divider */}
+        <div className="my-4 flex items-center">
+          <div className="flex-1 border-t" />
+          <span className="mx-2 text-xs text-muted-foreground">
+            OR
+          </span>
+          <div className="flex-1 border-t" />
+        </div>
+
+        {/* Google Login */}
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={handleGoogleLogin}
+        >
+          <svg
+            className="mr-2 h-4 w-4"
+            viewBox="0 0 488 512"
+            fill="currentColor"
+          >
+            <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" />
+          </svg>
+          Continue with Google
+        </Button>
+      </div>
+    </div>
+  );
+}
