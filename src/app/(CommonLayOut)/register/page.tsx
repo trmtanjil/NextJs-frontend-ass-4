@@ -1,10 +1,10 @@
-import { Register } from '@/components/modules/authentication/registre'
+import { RegisterForm } from '@/components/modules/authentication/RegisterForm'
 import React from 'react'
 
 export default function SignInPage() {
   return (
     <div>
-      <Register></Register>
+     <RegisterForm></RegisterForm>
          </div>
   )
 }

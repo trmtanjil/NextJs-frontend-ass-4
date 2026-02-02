@@ -23,6 +23,7 @@ export default function LoginForm() {
       const res = await authClient.signIn.email({
         email,
         password,
+         callbackURL: "/", 
       });
 
       if (res.error) {
@@ -39,6 +40,7 @@ export default function LoginForm() {
   const handleGoogleLogin = async () => {
     await authClient.signIn.social({
       provider: "google",
+       callbackURL:"http://localhost:3000"
     });
   };
 
