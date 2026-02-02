@@ -7,10 +7,8 @@ export const userService ={
 getSession: async function () {
    try {
        const cookieStore =await cookies()
-  //      console.log(cookieStore)
-  // console.log("cokie store",cookieStore.toString())
  
-  const res = await fetch(`https://prisma-beckend-side-ass-4.vercel.app/get-session`,{
+  const res = await fetch("https://prisma-beckend-side-ass-4.vercel.app/api/auth/get-session",{
     headers:{
       Cookie:cookieStore.toString()
     },
@@ -18,7 +16,7 @@ getSession: async function () {
   })
   const session =await res.json()
 
-  if(session===null){
+  if(session ===null){
     return{
         data:null, error:{message:"session is missing"}
     }
