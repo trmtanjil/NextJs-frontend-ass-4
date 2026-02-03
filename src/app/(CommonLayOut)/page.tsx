@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
  import { userService } from "@/services/user.service";
  import Heropage from "./heroSection/page";
 import CategoryList from "./category/page";
-    
+     
 export default async function Home() {
 
    const {data} = await userService.getSession()
