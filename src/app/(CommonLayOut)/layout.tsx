@@ -13,7 +13,7 @@ export default function CommonLayout({
       <Navbar />
       
       {/* ২. মেইন কন্টেন্ট যা পেজ অনুযায়ী চেঞ্জ হবে */}
-      <main className="flex-grow">
+      <main >
         {children}
       </main>
 
