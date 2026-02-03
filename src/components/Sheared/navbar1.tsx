@@ -81,7 +81,7 @@ const Navbar = ({
     },
     {
       title:"deshboard",
-      url:"/deshboard/seller-deshboard"
+      url:"/dashboard"
     },
    
   ],

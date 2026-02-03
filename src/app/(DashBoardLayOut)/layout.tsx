@@ -22,7 +22,7 @@ export default async function DashboardLayout({
 }) {
     const {data}= await userService.getSession()
  const userInfo = data?.user?.role
- console.log(userInfo)
+ console.log("deshboard",userInfo)
   return (
     <SidebarProvider>
       <Sidebar   />
