@@ -10,6 +10,7 @@ export const sellerRoutes: Route[] = [
       { title: "Overview", url: "/seller-dashboard" },
       { title: "My Products", url: "/seller-dashboard/products" },
       { title: "Orders", url: "/seller-dashboard/orders" },
+      
     ],
   },
 ];
