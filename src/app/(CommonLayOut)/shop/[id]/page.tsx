@@ -56,7 +56,7 @@ export default async function CategoryPage({ params }: PageProps) {
               <p className="text-primary font-bold text-2xl mb-4">${med.price}</p>
               
               <div className="flex gap-2">
-                <Link href={`/medicine/${med.id}`} className="flex-1">
+                <Link href={`/allmadicin/${med.id}`} className="flex-1">
                   <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-white">
                     Details
                   </Button>
