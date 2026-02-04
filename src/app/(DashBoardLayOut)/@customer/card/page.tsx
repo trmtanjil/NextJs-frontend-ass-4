@@ -21,6 +21,7 @@ const handleOrder = async () => {
   setLoading(true);
   
   const payload = {
+    address: "Not provided", // TODO: Replace with real address or collect from user
     items: items.map(item => ({
       medicineId: item.medicineId,
       quantity: Number(item.quantity)

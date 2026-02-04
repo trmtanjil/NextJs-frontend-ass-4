@@ -15,7 +15,7 @@ export const userRoutes: Route[] = [
       },
       {
         title: "Orders",
-        url: "/dashboard/orders",
+        url: "/orders",
       },
         { title: "Card", url: "/card" },
     ],
