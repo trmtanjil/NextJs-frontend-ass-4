@@ -10,7 +10,7 @@ type PageProps = {
 export default async function CategoryPage({ params }: PageProps) {
   // ১. ইউআরএল থেকে আসা ক্যাটাগরি আইডি (এটি সলিড স্ট্রিং)
   const { id: urlCategoryId } = await params;
-
+ 
   // ২. সব মেডিসিন ফেচ করা (অথবা ক্যাটাগরি ওয়াইজ)
   const { data: allMedicines, error } = await MedicinService.getCetegoryMedicines(urlCategoryId);
 

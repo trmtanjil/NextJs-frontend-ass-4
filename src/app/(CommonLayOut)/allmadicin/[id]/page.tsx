@@ -9,10 +9,11 @@ type PageProps = {
 }
 
 export default async function Page({ params }: PageProps) {
-  const { id } = params
+  const { id } = await params
+  console.log("id",id)
 
   const { data: medicine, error } = await MedicinService.getMedicineById(id)
-  console.log(medicine)
+  console.log(" sing m",medicine)
 
   if (error || !medicine) {
     return (
