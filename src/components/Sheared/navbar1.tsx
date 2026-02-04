@@ -76,8 +76,8 @@ const Navbar = ({
     },
  
     {
-      title: "Blog",
-      url: "/blogs",
+      title: "card",
+      url: "/card",
     },
     {
       title:"deshboard",

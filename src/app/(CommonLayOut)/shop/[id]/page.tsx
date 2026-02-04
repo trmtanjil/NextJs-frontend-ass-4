@@ -2,6 +2,7 @@ import React from "react";
 import MedicinService from "@/services/medicine.service"; 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Medicine } from "@/types/medicine.type";
 
 type PageProps = {
   params: Promise<{ id: string }>; 
@@ -21,7 +22,7 @@ export default async function CategoryPage({ params }: PageProps) {
   // ৩. ফিল্টার কন্ডিশন: মেডিসিনের ভেতর থাকা categoryId এবং ইউআরএল এর id ম্যাচ করানো
   // অনুযায়ী এখানে 'categoryId' ফিল্ডটি ব্যবহার করা হয়েছে
   const filteredMedicines = allMedicines?.filter(
-    (med: any) => med.categoryId === urlCategoryId
+    (med: Medicine) => med.categoryId === urlCategoryId
   );
 
   return (
@@ -37,7 +38,7 @@ export default async function CategoryPage({ params }: PageProps) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {filteredMedicines && filteredMedicines.length > 0 ? (
-          filteredMedicines.map((med: any) => (
+          filteredMedicines.map((med: Medicine) => (
             <div key={med.id} className="border rounded-xl p-4 shadow hover:shadow-lg transition bg-white">
               <div className="h-40 bg-gray-50 rounded-md mb-4 flex items-center justify-center relative overflow-hidden">
                  {med.image ? (

@@ -1,8 +1,9 @@
 import React from 'react'
 import Link from 'next/link'
-import { ArrowLeft, ShoppingCart } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import MedicinService from '@/services/medicine.service'
+import AddToCartButton from '../../shop/AddToCartButton'
 
 type PageProps = {
   params: { id: string }
@@ -11,6 +12,7 @@ type PageProps = {
 export default async function Page({ params }: PageProps) {
   const { id } = await params
   console.log("id",id)
+ 
 
   const { data: medicine, error } = await MedicinService.getMedicineById(id)
   console.log(" sing m",medicine)
@@ -67,9 +69,9 @@ export default async function Page({ params }: PageProps) {
             </div>
           </div>
 
-          <Button className="w-full md:w-max px-10 py-6 text-lg gap-3">
-            <ShoppingCart className="w-5 h-5" /> Add to Cart
-          </Button>
+          <h1 className="w-full md:w-max px-10 py-6 text-lg gap-3">
+            <AddToCartButton medicine={medicine}/>  
+          </h1>
         </div>
       </div>
     </div>
