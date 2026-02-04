@@ -4,7 +4,7 @@ const MedicinService = {
   // category-wise medicines fetch
   getCetegoryMedicines: async (categoryId?: string) => {
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL;
+      const API_URL = process.env.API_URL;
 
       if (!API_URL) {
         throw new Error("API URL is not defined");
@@ -42,6 +42,23 @@ const MedicinService = {
       };
     }
   },
+
+
+  getMedicineById: async (id: string) => {
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL;
+      const res = await fetch(`${API_URL}/medicines/${id}`, {
+        cache: "no-store", //  update data 
+      });
+      const result = await res.json();
+      return { data: result?.data || result, error: null };
+    } catch (error) {
+      return { data: null, error: "Failed to load medicine details" };
+    }
+  },
 };
+
+
+
 
 export default MedicinService;

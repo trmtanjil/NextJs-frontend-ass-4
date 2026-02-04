@@ -20,12 +20,11 @@ export default async function DashboardLayout({
     customer: React.ReactNode;
       seller: React.ReactNode;
 }) {
-    const {data}= await userService.getSession()
- const userInfo = data?.user?.role
- console.log("deshboard",userInfo)
+  const userData = await userService.getSession();
+  const userRole = userData?.data.user.role;
   return (
     <SidebarProvider>
-      <Sidebar   />
+      <Sidebar data-customer={userRole} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
@@ -37,11 +36,11 @@ export default async function DashboardLayout({
         </header>
            <div className="flex flex-1 flex-col gap-4 p-4">
           {children}
-{userInfo?.role === Roles.admin
+{userRole=== Roles.admin
   ? admin
-  : userInfo?.role === Roles.customer
+  : userRole === Roles.customer
   ? customer
-  : userInfo?.role === Roles.seller
+  : userRole === Roles.seller
   ? seller
   : null}
         </div>

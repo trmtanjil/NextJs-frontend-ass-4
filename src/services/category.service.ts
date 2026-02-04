@@ -9,7 +9,7 @@ export interface ServiceResult<T> {
 }
 
 // মনে রাখবে: Client side থেকে এক্সেস করতে .env ফাইলে NEXT_PUBLIC_API_URL থাকতে হবে
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.API_URL;
 
 const categoryService = {
   getAllCategories: async (): Promise<ServiceResult<Category[]>> => {
