@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
  import { userService } from "@/services/user.service";
  import Heropage from "./heroSection/page";
 import CategoryList from "./category/page";
+import Drpage from "./pages/page";
+import OurClientSay from "./pages/ourcliendSay";
      
 export default async function Home() {
 
@@ -17,7 +19,9 @@ export default async function Home() {
       <div>
         <CategoryList></CategoryList>
       </div>
-   <Button>click heare</Button>
+     <Drpage></Drpage>
+      <OurClientSay></OurClientSay>
+      
     </div>
   );
 }

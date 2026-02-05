@@ -1,5 +1,7 @@
 import { Navbar } from "@/components/Sheared/navbar1";
 import { Toaster } from "sonner"; // ১. Sonner থেকে Toaster ইমপোর্ট করো
+import Footer from "./pages/footer";
+ 
 
 export default function CommonLayout({
   children,
@@ -16,12 +18,14 @@ export default function CommonLayout({
         {children}
       </main>
 
+
       {/* ৩. টোস্টার কম্পোনেন্টটি এখানে রাখো */}
       {/* richColors দিলে সাকসেস মেসেজ সবুজ আর এরর লাল দেখাবে */}
       <Toaster richColors position="top-right" closeButton />
 
       {/* ৪. একটি ফুটার অ্যাড করলে সাইটটি কমপ্লিট দেখাবে */}
-      {/* <Footer /> */}
+    
+      <Footer />
     </div>
   );
 }
