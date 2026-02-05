@@ -80,7 +80,7 @@ export const userService = {
   ) {
     try {
       const cookieHeader = await getCookieHeader();
-      const url = new URL(`${API_URL}/users`);
+      const url = new URL(`${API_URL}/admin/users`);
 
       if (params) {
         Object.entries(params).forEach(([key, value]) => {
