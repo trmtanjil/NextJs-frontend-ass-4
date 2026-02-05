@@ -22,5 +22,5 @@ export default async function UsersPage({ searchParams }: PageProps) {
     return <div className="text-red-500">Failed to load users</div>;
   }
 
-  return <UsersTable users={data.data} meta={data.meta} />;
+  return <span className="text-black    "> <UsersTable users={data.data} meta={data.meta} /></span>;
 }

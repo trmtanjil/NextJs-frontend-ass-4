@@ -122,7 +122,31 @@ export const userService = {
   },
   
 
+  adminUpdateUserStatus: async function (
+    id: string,
+    payload: { status: string },
+  ) {
+    try {
+      const cookieHeader = await getCookieHeader();
 
+      const res = await fetch(`${API_URL}/admin/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieHeader,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      return await handleResponse(res);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to update user status";
+      return {
+        data: null,
+        error: { message: errorMessage, status: 500 },
+      };
+    }
+  },
 
 
 };

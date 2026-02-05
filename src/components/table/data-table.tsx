@@ -1,5 +1,5 @@
 "use client";
- 
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -7,6 +7,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 
 export interface Meta {
+  // Meta তে id সাধারণত থাকে না, তবে তোমার API থেকে আসলে রাখতে পারো। 
+  // আমি টাইপ এরর এড়াতে এটাকে অপশনাল করে দিচ্ছি।
+  id?: string; 
   total: number;
   page: number;
   limit: number;
@@ -15,7 +18,9 @@ export interface Meta {
 
 interface DataTableProps<T> {
   columns: Array<{
-    accessorKey: string;
+    id?: string; // এটি ইউনিক কি হিসেবে কাজ করবে
+    accessorKey?: string; // এখানে ? যোগ করো (Optional)
+    
     header: string;
     cell?: (row: T) => React.ReactNode;
   }>;
@@ -67,7 +72,7 @@ export function DataTable<T extends { id?: string }>({
 
   return (
     <div className="space-y-4">
-      {title && <h2 className="text-lg font-semibold">{title}</h2>}
+      {title && <h2 className="text-lg font-semibold text-black">{title}</h2>}
 
       {onSearch && (
         <Input
@@ -78,32 +83,37 @@ export function DataTable<T extends { id?: string }>({
         />
       )}
 
-      <div className="rounded-md border">
+      <div className="rounded-md border border-slate-200 overflow-hidden">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-slate-50">
             <TableRow>
-              {columns.map((column) => (
-                <TableHead key={column.accessorKey}>{column.header}</TableHead>
+              {columns.map((column, index) => (
+                /* ইউনিক কি ফিক্স: id থাকলে সেটা নেবে, না থাকলে accessorKey, আর কিছুই না থাকলে index */
+                <TableHead key={column.id || column.accessorKey || `header-${index}`} className="font-bold text-black uppercase text-[11px] tracking-wider">
+                  {column.header}
+                </TableHead>
               ))}
             </TableRow>
           </TableHeader>
-          <TableBody>
-            {data.length ? (
-              data.map((row, idx) => (
-                <TableRow key={`${row.id || idx}`}>
-                  {columns.map((column) => (
-                    <TableCell key={column.accessorKey}>
-                      {column.cell
-                        ? column.cell(row)
-                        : (row as Record<string, any>)[column.accessorKey]}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
+    <TableBody>
+  {data.length ? (
+    data.map((row, rowIdx) => (
+      <TableRow key={row.id || `row-${rowIdx}`} className="hover:bg-slate-50/50 transition-colors">
+        {columns.map((column, colIdx) => (
+          <TableCell key={column.id || column.accessorKey || `cell-${colIdx}`}>
+            {column.cell
+              ? column.cell(row)
+              : column.accessorKey // এখানে চেক করা হচ্ছে accessorKey আছে কি না
+                ? (row as Record<string, any>)[column.accessorKey]
+                : "—"} 
+          </TableCell>
+        ))}
+      </TableRow>
+    ))
+  ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center text-gray-500">
-                  No data found
+                <TableCell colSpan={columns.length} className="text-center py-10 text-gray-400 italic">
+                  No records found.
                 </TableCell>
               </TableRow>
             )}
@@ -112,9 +122,10 @@ export function DataTable<T extends { id?: string }>({
       </div>
 
       {pagination && paginationMeta && (
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-600">
-            Page {paginationMeta.page} of {paginationMeta.totalPages} ({paginationMeta.total} total)
+        <div className="flex items-center justify-between px-2">
+          <div className="text-xs font-medium text-slate-500">
+            Showing <span className="text-black font-bold">{paginationMeta.page}</span> of <span className="text-black font-bold">{paginationMeta.totalPages}</span> pages 
+            <span className="ml-1 text-slate-300">({paginationMeta.total} results)</span>
           </div>
           <div className="flex gap-2">
             <Button
@@ -122,18 +133,20 @@ export function DataTable<T extends { id?: string }>({
               size="sm"
               onClick={handlePreviousPage}
               disabled={paginationMeta.page <= 1}
+              className="rounded-lg h-8 text-[11px] font-bold uppercase tracking-tight"
             >
-              <ChevronLeft className="w-4 h-4" />
-              Previous
+              <ChevronLeft className="w-3 h-3 mr-1" />
+              Prev
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={handleNextPage}
               disabled={paginationMeta.page >= paginationMeta.totalPages}
+              className="rounded-lg h-8 text-[11px] font-bold uppercase tracking-tight"
             >
               Next
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3 h-3 ml-1" />
             </Button>
           </div>
         </div>

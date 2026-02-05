@@ -1,3 +1,5 @@
+import { UserRoleAction } from "./UserRoleAction";
+
 export interface User {
   id: string;
   name?: string;
@@ -10,17 +12,18 @@ export const columns = [
   {
     accessorKey: "id",
     header: "ID",
-    cell: (row: User) => <span className="font-mono text-xs">{row.id?.slice(0, 8)}</span>,
+    cell: (row: User) => <span className="font-mono text-xs text-black">{row.id?.slice(0, 8)}</span>,
   },
   {
     accessorKey: "name",
     header: "Name",
-    cell: (row: User) => row.name || "—",
+    
+    cell: (row: User) =><span className="text-black">{ row.name || "—" }</span>,
   },
   {
     accessorKey: "email",
     header: "Email",
-    cell: (row: User) => row.email || "—",
+    cell: (row: User) => <span className="text-black">{row.email || "—"}</span>,
   },
   {
     accessorKey: "role",
@@ -39,10 +42,28 @@ export const columns = [
   },
   {
     accessorKey: "createdAt",
+    
     header: "Created At",
     cell: (row: User) => {
       if (!row.createdAt) return "—";
       return new Date(row.createdAt).toLocaleDateString();
     },
+  },
+  {
+    id: "role-action",
+    header: "Role",
+    cell: (row: User) => (
+      <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${
+        row.role === "admin" ? "bg-red-100 text-red-600" : 
+        row.role === "seller" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"
+      }`}>
+        {row.role}
+      </span>
+    ),
+  },
+  {
+    id: "actions",
+    header: "Change Role",
+    cell: (row: User) => <UserRoleAction user={row} />, 
   },
 ];
