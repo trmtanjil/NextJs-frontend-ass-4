@@ -11,7 +11,7 @@ export const userRoutes: Route[] = [
       },
       {
         title: "Profile",
-        url: "/dashboard/profile",
+        url: "/profile",
       },
       {
         title: "Orders",

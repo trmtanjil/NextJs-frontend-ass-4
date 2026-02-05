@@ -49,7 +49,8 @@ async function apiFetch<T>(
     return { data: result, error: null };
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : "Something went wrong";
-    const errorStatus = err instanceof Error && 'status' in err ? (err as Record<string, any>).status : undefined;
+    const statusValue = err instanceof Error && 'status' in err ? (err as Record<string, unknown>).status : undefined;
+    const errorStatus = typeof statusValue === 'number' ? statusValue : undefined;
     return {
       data: null,
       error: {
@@ -73,21 +74,39 @@ export interface Order {
   totalAmount: number;
   status: string;
   createdAt: string;
+  orderItems?: OrderItem[];
+}
+
+export interface OrderItem {
+  id: string;
+  quantity: number;
+  unitPrice: number;
+  medicine?: {
+    name: string;
+  };
+}
+
+export interface OrderResponse {
+  data: (Order & { orderItems?: OrderItem[] })[];
 }
 
 export const orderService = {
   createOrder: async (orderData: CreateOrderPayload) => {
-    return apiFetch<{ message: string }>("order", {
+    return apiFetch<{ message: string }>("/order", {
       method: "POST",
       body: JSON.stringify(orderData),
     });
   },
 
 getmyorder: async () => {
-    return apiFetch("/order", { method: "GET" });
+    return apiFetch<OrderResponse>("/order", { method: "GET" });
   },
 
-
+getSingleOrder: async (id: string) => {
+  return apiFetch<Order>(`/order/${id}`, {
+    method: "GET",
+  });
+}
 
 
   
