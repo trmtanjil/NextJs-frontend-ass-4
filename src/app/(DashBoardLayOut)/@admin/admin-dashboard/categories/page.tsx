@@ -6,12 +6,11 @@ import {
   createCategoryAction,
 } from "@/action/category.actions";
 import { toast } from "sonner";
- import {
+import {
   Plus,
   Tag,
   Loader2,
   LayoutGrid,
-  Search,
   FolderPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
+// ক্যাটাগরি টাইপ
 type Category = {
   id: string;
   name: string;
@@ -33,11 +33,16 @@ export default function CategoryPage() {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const { data, error }: any = await getAllCategoriesAction();
-      if (error) {
-        toast.error(error);
+      // এখানে : any সরিয়ে টাইপ ডিফাইন করা হয়েছে
+      const res = await getAllCategoriesAction();
+      
+      if (res?.error) {
+        toast.error(res.error);
       } else {
-        setCategories(data?.data || []);
+        // তোমার API ফরম্যাট অনুযায়ী data.data অথবা সরাসরি data সেট করো
+        const fetchedData = res?.data as unknown as Category[] || []; 
+        // নোট: যদি অ্যাকশন থেকে সরাসরি {data: [...]} আসে, তবে নিচের লাইনটি ব্যবহার করো:
+        setCategories(Array.isArray(res.data) ? res.data : []);
       }
     } catch (err) {
       toast.error("An unexpected error occurred");
@@ -57,10 +62,11 @@ export default function CategoryPage() {
     }
 
     setSubmitting(true);
+    // এখানেও টাইপ অটোমেটিক ডিটেক্ট হবে অ্যাকশন ফাইল থেকে
     const { data, error } = await createCategoryAction(newCategory.trim());
 
     if (error) {
-      toast.error(error);
+      toast.error(error as string);
     } else if (data) {
       toast.success("Category added successfully!");
       setNewCategory("");
@@ -68,7 +74,6 @@ export default function CategoryPage() {
     }
     setSubmitting(false);
   };
-
   return (
     <div className="min-h-screen bg-slate-50/50 py-12 px-4">
       <div className="max-w-5xl mx-auto">

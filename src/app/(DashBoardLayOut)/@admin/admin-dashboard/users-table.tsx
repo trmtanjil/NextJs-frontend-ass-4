@@ -21,10 +21,9 @@ export function UsersTable({ users, meta }: UsersTableProps) {
       data={users}
       pagination
       paginationMeta={meta}
-      onPaginationChange={({ pageIndex, pageSize }) => {
+      onPaginationChange={() => {
         const params = new URLSearchParams(searchParams.toString());
-        params.set("page", String(pageIndex + 1));
-        params.set("limit", String(pageSize));
+     
         router.push(`?${params.toString()}`);
       }}
    

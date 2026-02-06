@@ -2,8 +2,7 @@
 
 import { userService, GetUsersParams } from "@/services/user.service";
 import { revalidatePath } from "next/cache";
-import { toast } from "sonner";
-
+ 
 export async function getSessionAction() {
   const { data, error } = await userService.getSession();
 

@@ -2,21 +2,22 @@ import MedicinService from "@/services/medicine.service";
 import MedicineTable from "./productTable";
 
 export default async function AllProductpage() {
-  const response = await MedicinService.getAllMedicines();
+  const { data, error } = await MedicinService.getAllMedicines();
 
-  // 🔥 Axios হলে সবসময় .data.data দেখো
-  const medicines = response?.data?.data ?? [];
+  // যদি ডাটা না থাকে বা এরর হয়
+  if (error) return <div className="text-red-500">Error:</div>;
+
+  // সার্ভিস এখন নিশ্চিত করছে 'data' একটি অ্যারে
+  const medicines = data || []; 
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-sm text-black">
-      <h1 className="text-2xl font-bold mb-4">All Medicines</h1>
-
+    <div className="p-6 bg-white text-black">
+      <h1 className="text-2xl font-bold mb-6">All Medicines</h1>
+      
       {medicines.length > 0 ? (
         <MedicineTable medicines={medicines} />
       ) : (
-        <div className="text-center py-20 text-gray-400 border rounded-md">
-          No medicines found.
-        </div>
+        <p>No medicines found.</p>
       )}
     </div>
   );

@@ -1,184 +1,144 @@
-// মনে রাখবে: Client side থেকে এক্সেস করতে .env ফাইলে NEXT_PUBLIC_API_URL থাকতে হবে
-
 import { cookies } from "next/headers";
+import { GetMedicinesParams } from "@/action/medicine.actions";
+import { IMedicine } from "@/types/medicine.type";
 
-const API_URL = process.env.API_URL  
+const API_URL = process.env.API_URL;
 
+/* =====================
+   Common Types
+===================== */
 
-
-
-
-export interface GetMedicinesParams {
-  search?: string;
-  categoryId?: string;
-  minPrice?: string | number;
-  maxPrice?: string | number;
-  page?: number;
-  limit?: number;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
+interface ApiError {
+  message: string;
+  status?: number;
 }
 
-interface ServiceOptions {
-  cache?: RequestCache;
-  revalidate?: number;
+interface ServiceResult<T> {
+  data: T | null;
+  error: ApiError | null;
 }
 
-const getCookieHeader = async () => {
-  try {
-    const cookieStore = await cookies();
-    return cookieStore
-      .getAll()
-      .map((c) => `${c.name}=${c.value}`)
-      .join("; ");
-  } catch {
-    return null;
-  }
-};
+/* =====================
+   Generic API Fetch
+===================== */
+
 async function apiFetch<T>(
   endpoint: string,
-  options: RequestInit = {},
-): Promise<{
-  data: T | null;
-  error: { message: string; status?: number } | null;
-}> {
+  options: RequestInit = {}
+): Promise<ServiceResult<T>> {
   try {
-    const cookieHeader = await getCookieHeader();
-
-    const headers = new Headers(options.headers);
-    if (!headers.has("Content-Type")) {
-      headers.set("Content-Type", "application/json");
+    if (!API_URL) {
+      throw new Error("API_URL is not defined");
     }
 
-    if (cookieHeader) {
-      headers.set("Cookie", cookieHeader);
+    const cookieStore = await cookies();
+    const token =
+      cookieStore.get("accessToken")?.value ??
+      cookieStore.get("token")?.value ??
+      null;
+
+    const headers = new Headers(options.headers);
+    headers.set("Content-Type", "application/json");
+
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
     }
 
     const res = await fetch(`${API_URL}${endpoint}`, {
-      credentials: "include",
       ...options,
       headers,
     });
 
+    const result: unknown = await res.json();
+
     if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      throw new Error(errorData.message || res.statusText);
+      const message =
+        typeof result === "object" &&
+        result !== null &&
+        "message" in result
+          ? String((result as { message?: string }).message)
+          : "You are not authorized";
+
+      return {
+        data: null,
+        error: { message, status: res.status },
+      };
     }
 
-    const data = await res.json();
-    return { data, error: null };
-  } catch (err: any) {
+    return {
+      data: (result as { data?: T })?.data ?? (result as T),
+      error: null,
+    };
+  } catch (err: unknown) {
     return {
       data: null,
       error: {
-        message: err.message || "Something went wrong",
-        status: err.status,
+        message:
+          err instanceof Error ? err.message : "Network error",
       },
     };
   }
 }
 
-function buildQuery(params?: Record<string, any>) {
+/* =====================
+   Helper: Query Builder
+===================== */
+
+function buildQuery(params?: GetMedicinesParams): string {
   if (!params) return "";
 
   const query = new URLSearchParams();
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== "") {
-      query.append(key, String(value));
-    }
-  });
 
-  return query.toString() ? `?${query.toString()}` : "";
+  (Object.entries(params) as [keyof GetMedicinesParams, string | number | undefined][])
+    .forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        query.append(String(key), String(value));
+      }
+    });
+
+  return query.toString();
 }
 
+/* =====================
+   Medicine Service
+===================== */
+
 const MedicinService = {
-  // category-wise medicines fetch
-  getCetegoryMedicines: async (categoryId?: string) => {
-    try {
-      const API_URL = process.env.API_URL;
-
-      if (!API_URL) {
-        throw new Error("API URL is not defined");
-      }
-
-      const url = categoryId
-        ? `${API_URL}/medicines?category=${categoryId}`
-        : `${API_URL}/medicines`;
-
-      const res = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        cache: "no-store",
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        return {
-          data: [],
-          error: result?.message || "Failed to fetch medicines",
-        };
-      }
-
-      return {
-        data: result?.data ?? [],
-        error: null,
-      };
-    } catch (error) {
-      return {
-        data: [],
-        error: "Something went wrong while fetching medicines",
-      };
-    }
-  },
-
-
-  getMedicineById: async (id: string) => {
-    try {
-      const API_URL = process.env.API_URL;
-      const res = await fetch(`${API_URL}/medicines/${id}`, {
-        cache: "no-store", //  update data 
-      });
-      const result = await res.json();
-      return { data: result?.data || result, error: null };
-    } catch (error) {
-      return { data: null, error: "Failed to load medicine details" };
-    }
-  },
-
-
-
-    getAllMedicines: async (
-    params?: GetMedicinesParams,
-    options?: ServiceOptions,
-  ) => {
+  // ✅ Get All Medicines (Always returns array)
+  getAllMedicines: async (
+    params?: GetMedicinesParams
+  ): Promise<ServiceResult<IMedicine[]>> => {
     const query = buildQuery(params);
+    const endpoint = query ? `/medicines?${query}` : "/medicines";
 
-    return apiFetch(`/medicines${query}`, {
-      method: "GET",
-      cache: options?.cache,
-      next: options?.revalidate
-        ? { revalidate: options.revalidate }
-        : undefined,
-    });
+    const { data, error } = await apiFetch<IMedicine[] | IMedicine>(endpoint);
+
+    if (!data) {
+      return { data: [], error };
+    }
+
+    return {
+      data: Array.isArray(data) ? data : [data],
+      error,
+    };
   },
 
+  // ✅ Get Single Medicine
+  getMedicineById: async (
+    id: string
+  ): Promise<ServiceResult<IMedicine>> => {
+    return apiFetch<IMedicine>(`/medicines/${id}`);
+  },
 
-
-    createMedicine: async (payload: any) => {
-    return apiFetch("/medicines", {
+  // ✅ Create Medicine
+  createMedicine: async (
+    payload: Partial<IMedicine>
+  ): Promise<ServiceResult<IMedicine>> => {
+    return apiFetch<IMedicine>("/seller/medicines", {
       method: "POST",
       body: JSON.stringify(payload),
     });
   },
-
-
-  
 };
-
-
-
 
 export default MedicinService;

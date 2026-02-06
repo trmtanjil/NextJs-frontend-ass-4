@@ -4,7 +4,7 @@ export interface User {
   id: string;
   name?: string;
   email?: string;
-  role?: string;
+  role: "user" | "seller" | "admin"; // '?' সরিয়ে নির্দিষ্ট টাইপ দাও
   createdAt?: string;
 }
 

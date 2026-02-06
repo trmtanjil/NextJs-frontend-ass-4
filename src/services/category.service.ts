@@ -1,132 +1,165 @@
 import { cookies } from "next/headers";
+
 const API_URL = process.env.API_URL;
+
+/* =====================
+   Types
+===================== */
 
 export interface Category {
   id: string;
   name: string;
 }
 
+export interface ApiError {
+  message: string;
+  status?: number;
+}
+
 export interface ServiceResult<T> {
   data: T | null;
-  error: { message: string } | null;
+  error: ApiError | null;
 }
-interface ServiceOptions {
-  cache?: RequestCache;
-  revalidate?: number;
-}
-// মনে রাখবে: Client side থেকে এক্সেস করতে .env ফাইলে NEXT_PUBLIC_API_URL থাকতে হবে
-
 
 export interface CreateCategoryPayload {
   name: string;
 }
 
+interface ServiceOptions {
+  cache?: RequestCache;
+  revalidate?: number;
+}
 
-const getCookieHeader = async () => {
+/* =====================
+   Cookie Helper
+===================== */
+
+
+const getCookieHeader = async (): Promise<string | null> => {
   try {
-    const cookieStore = await cookies();
-    const cookieArray = cookieStore.getAll().map((c) => `${c.name}=${c.value}`);
-    return cookieArray.join("; ");
-  } catch (e) {
+    const cookieStore = await cookies(); // ✅ await added
+
+    // Next.js compatible way
+    const allCookies = cookieStore.getAll();
+
+    return allCookies
+      .map((c) => `${c.name}=${c.value}`)
+      .join("; ");
+  } catch {
     return null;
   }
 };
 
+/* =====================
+   Generic API Fetch
+===================== */
+
 async function apiFetch<T>(
   endpoint: string,
-  options: RequestInit = {},
-): Promise<{
-  data: T | null;
-  error: { message: string; status?: number } | null;
-}> {
+  options: RequestInit = {}
+): Promise<ServiceResult<T>> {
   try {
+    if (!API_URL) {
+      throw new Error("API_URL is not defined");
+    }
+
+    // ✅ MUST await
     const cookieHeader = await getCookieHeader();
 
     const headers = new Headers(options.headers);
-    if (!headers.has("Content-Type")) {
-      headers.set("Content-Type", "application/json");
-    }
+    headers.set("Content-Type", "application/json");
 
-    if (cookieHeader) {
+    // ✅ Type-safe guard
+    if (typeof cookieHeader === "string" && cookieHeader.length > 0) {
       headers.set("Cookie", cookieHeader);
     }
 
     const res = await fetch(`${API_URL}${endpoint}`, {
-      credentials: "include",
       ...options,
-      headers: headers,
+      credentials: "include",
+      headers,
     });
 
+    const result: unknown = await res.json();
+
     if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      throw new Error(errorData.message || res.statusText);
+      const message =
+        typeof result === "object" &&
+        result !== null &&
+        "message" in result
+          ? String((result as { message?: string }).message)
+          : res.statusText;
+
+      return {
+        data: null,
+        error: { message, status: res.status },
+      };
     }
 
-    const data = await res.json();
-    return { data: data ?? [], error: null };
-  } catch (err: any) {
+    return {
+      data: (result as { data?: T })?.data ?? (result as T),
+      error: null,
+    };
+  } catch (err) {
     return {
       data: null,
       error: {
-        message: err.message || "Something went wrong",
-        status: err.status,
+        message:
+          err instanceof Error ? err.message : "Something went wrong",
       },
     };
   }
 }
 
-
-
-
+/* =====================
+   Category Service
+===================== */
 
 const categoryService = {
+  // Public GET (SSR safe)
   getAllCategories: async (): Promise<ServiceResult<Category[]>> => {
     try {
-      // ১. API_URL চেক করা
       if (!API_URL) {
-        throw new Error("NEXT_PUBLIC_API_URL is missing in .env file");
+        throw new Error("API_URL is missing");
       }
 
-      const url = `${API_URL}/categories`;
-
-      // ২. Fetch কল করা
-      const res = await fetch(url, {
+      const res = await fetch(`${API_URL}/categories`, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        cache: "no-store", // সবসময় লেটেস্ট ডাটা পাওয়ার জন্য
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
       });
 
-      // ৩. রেসপন্স চেক করা
-      const result = await res.json();
+      const result: { data?: Category[]; message?: string } =
+        await res.json();
 
       if (!res.ok) {
         return {
           data: null,
-          error: { message: result?.message || "Failed to load categories" },
+          error: { message: result.message ?? "Failed to load categories" },
         };
       }
 
-      // তোমার ব্যাকএন্ড যদি { data: [...] } ফরমেটে পাঠায়
       return {
-        data: result.data || result, 
+        data: result.data ?? [],
         error: null,
       };
-
     } catch (err) {
-      console.error("Category Fetch Error:", err);
       return {
         data: null,
-        error: { message:   "Something went wrong while fetching categories" },
+        error: {
+          message:
+            err instanceof Error
+              ? err.message
+              : "Something went wrong while fetching categories",
+        },
       };
     }
   },
 
-
-
-
-    getAllCategoriess: async (options?: ServiceOptions) => {
+  // Authenticated GET
+  getAllCategoriess: async (
+    options?: ServiceOptions
+  ): Promise<ServiceResult<Category[]>> => {
     return apiFetch<Category[]>("/categories", {
       method: "GET",
       cache: options?.cache,
@@ -136,8 +169,10 @@ const categoryService = {
     });
   },
 
-
-    createCategory: async (payload: CreateCategoryPayload) => {
+  // Create Category
+  createCategory: async (
+    payload: CreateCategoryPayload
+  ): Promise<ServiceResult<Category>> => {
     return apiFetch<Category>("/categories", {
       method: "POST",
       body: JSON.stringify(payload),

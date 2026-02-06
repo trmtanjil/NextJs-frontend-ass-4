@@ -2,7 +2,9 @@ import { Route } from "@/types/routes.type";
 
  
 export const userRoutes: Route[] = [
+  
   {
+    
     title: "Blog Management",
     items: [
       {
