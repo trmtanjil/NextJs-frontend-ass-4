@@ -3,6 +3,8 @@ import { Toaster } from "sonner"; // ১. Sonner থেকে Toaster ইমপ�
 import Footer from "./pages/footer";
  
 
+export const dynamic = 'force-dynamic';
+
 export default function CommonLayout({
   children,
 }: {

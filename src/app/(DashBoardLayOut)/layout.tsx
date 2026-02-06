@@ -17,6 +17,8 @@ import {
 import { Roles } from "@/constentse/roles";
 import { userService } from "@/services/user.service";
 import { AppSidebar } from "@/components/layout/app-sidebar";
+
+export const dynamic = 'force-dynamic';
   
 export default async function DashboardLayout({
   children,
@@ -30,7 +32,7 @@ export default async function DashboardLayout({
       seller: React.ReactNode;
 }) {
   const userData = await userService.getSession();
-  const userRole = userData?.data.user.role;
+  const userRole = userData?.data?.user?.role;
   return (
     <SidebarProvider>
       <AppSidebar user={userRole} />

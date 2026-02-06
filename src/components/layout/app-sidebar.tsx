@@ -21,7 +21,7 @@ export async function AppSidebar({
   user,
   ...props
 }: {
-  user: "ADMIN" | "CUSTOMER" | "SELLER";
+  user?: "ADMIN" | "CUSTOMER" | "SELLER";
 } & React.ComponentProps<typeof Sidebar>) {
   let routes: Route[] = [];
 
