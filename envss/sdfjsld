@@ -1,0 +1,6 @@
+BACKEND_URL=https://prisma-beckend-side-ass-4.vercel.app
+FRONTEND_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=https://prisma-beckend-side-ass-4.vercel.app/api
+
+API_URL=https://prisma-beckend-side-ass-4.vercel.app/api
+AUTH_URL=https://prisma-beckend-side-ass-4.vercel.app/api/auth
