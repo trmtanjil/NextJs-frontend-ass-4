@@ -1,4 +1,3 @@
- export const dynamic = "force-dynamic";
  import { getAllUsersAction } from "@/action/user.actions";
 import { UsersTable } from "../users-table";
 

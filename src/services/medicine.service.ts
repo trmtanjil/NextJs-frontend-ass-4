@@ -1,12 +1,13 @@
+
 import { cookies } from "next/headers";
 import { GetMedicinesParams } from "@/action/medicine.actions";
 import { IMedicine } from "@/types/medicine.type";
 
 const API_URL = process.env.API_URL;
 
-/* =====================
+/*   
    Common Types
-===================== */
+  */
 
 interface ApiError {
   message: string;
@@ -18,9 +19,9 @@ interface ServiceResult<T> {
   error: ApiError | null;
 }
 
-/* =====================
+/* 
    Generic API Fetch
-===================== */
+ */
 
 async function apiFetch<T>(
   endpoint: string,
@@ -80,9 +81,9 @@ async function apiFetch<T>(
   }
 }
 
-/* =====================
+/*  
    Helper: Query Builder
-===================== */
+  */
 
 function buildQuery(params?: GetMedicinesParams): string {
   if (!params) return "";
@@ -99,12 +100,12 @@ function buildQuery(params?: GetMedicinesParams): string {
   return query.toString();
 }
 
-/* =====================
+/* 
    Medicine Service
-===================== */
+  */
 
 const MedicinService = {
-  // ✅ Get All Medicines (Always returns array)
+  //   Get All Medicines (Always returns array)
   getAllMedicines: async (
     params?: GetMedicinesParams
   ): Promise<ServiceResult<IMedicine[]>> => {
