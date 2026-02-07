@@ -1,13 +1,12 @@
 // types/order.ts
-export type OrderStatus = "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+export type OrderStatus = "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
 export interface OrderItem {
-  id: string;
+  _id: string;
+  productName: string;
   quantity: number;
-  unitPrice: number;
-  medicine: {
-    name: string;
-  };
+  totalPrice: number;
+  status: OrderStatus;
 }
 
 export interface IOrder {
