@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function OverviewPage() {
   // সার্ভিস থেকে কিছু ডাটা নিয়ে আসা (কাউন্ট দেখানোর জন্য)
-  const { data: medicines } = await MedicinService.getAllMedicines();
+  const { data: medicines } = await MedicinService.getAll();
   const totalMedicines = medicines?.length || 0;
 
   const stats = [

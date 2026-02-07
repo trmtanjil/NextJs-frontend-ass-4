@@ -1,36 +1,27 @@
-
+// src/services/medicine.service.ts
 import { cookies } from "next/headers";
+import { Medicine } from "@/types/medicine.type";
 import { GetMedicinesParams } from "@/action/medicine.actions";
-import { IMedicine } from "@/types/medicine.type";
 
 const API_URL = process.env.API_URL;
 
-/*   
-   Common Types
-  */
-
-interface ApiError {
-  message: string;
-  status?: number;
-}
-
-interface ServiceResult<T> {
+/* =====================
+   Common Result Type
+===================== */
+export interface ServiceResult<T> {
   data: T | null;
-  error: ApiError | null;
+  error: string | null;
 }
 
-/* 
-   Generic API Fetch
- */
-
+/* =====================
+   Generic Fetch
+===================== */
 async function apiFetch<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ServiceResult<T>> {
   try {
-    if (!API_URL) {
-      throw new Error("API_URL is not defined");
-    }
+    if (!API_URL) throw new Error("API_URL is missing");
 
     const cookieStore = await cookies();
     const token =
@@ -50,96 +41,75 @@ async function apiFetch<T>(
       headers,
     });
 
-    const result: unknown = await res.json();
+    const result = await res.json();
 
     if (!res.ok) {
-      const message =
-        typeof result === "object" &&
-        result !== null &&
-        "message" in result
-          ? String((result as { message?: string }).message)
-          : "You are not authorized";
-
       return {
         data: null,
-        error: { message, status: res.status },
+        error: result?.message ?? "Request failed",
       };
     }
 
     return {
-      data: (result as { data?: T })?.data ?? (result as T),
+      data: result.data ?? result,
       error: null,
     };
-  } catch (err: unknown) {
+  } catch (err) {
     return {
       data: null,
-      error: {
-        message:
-          err instanceof Error ? err.message : "Network error",
-      },
+      error: err instanceof Error ? err.message : "Network error",
     };
   }
 }
 
-/*  
-   Helper: Query Builder
-  */
-
-function buildQuery(params?: GetMedicinesParams): string {
+/* =====================
+   Query Builder
+===================== */
+function buildQuery(params?: GetMedicinesParams) {
   if (!params) return "";
 
   const query = new URLSearchParams();
 
-  (Object.entries(params) as [keyof GetMedicinesParams, string | number | undefined][])
-    .forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        query.append(String(key), String(value));
-      }
-    });
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      query.append(key, String(value));
+    }
+  });
 
   return query.toString();
 }
 
-/* 
+/* =====================
    Medicine Service
-  */
-
-const MedicinService = {
-  //   Get All Medicines (Always returns array)
-  getAllMedicines: async (
-    params?: GetMedicinesParams
-  ): Promise<ServiceResult<IMedicine[]>> => {
+===================== */
+// src/services/medicine.service.ts
+const medicineService = {
+  getAll: async (params?: GetMedicinesParams) => {
     const query = buildQuery(params);
     const endpoint = query ? `/medicines?${query}` : "/medicines";
-
-    const { data, error } = await apiFetch<IMedicine[] | IMedicine>(endpoint);
-
-    if (!data) {
-      return { data: [], error };
-    }
-
-    return {
-      data: Array.isArray(data) ? data : [data],
-      error,
-    };
+    return apiFetch<Medicine[]>(endpoint);
   },
 
-  // ✅ Get Single Medicine
-  getMedicineById: async (
-    id: string
-  ): Promise<ServiceResult<IMedicine>> => {
-    return apiFetch<IMedicine>(`/medicines/${id}`);
+
+    getById: async (id: string): Promise<ServiceResult<Medicine>> => {
+    return apiFetch<Medicine>(`/medicines/${id}`);
   },
 
-  // ✅ Create Medicine
-  createMedicine: async (
-    payload: Partial<IMedicine>
-  ): Promise<ServiceResult<IMedicine>> => {
-    return apiFetch<IMedicine>("/seller/medicines", {
+  create: async (
+    payload: Partial<Medicine>,
+    token: string
+  ): Promise<ServiceResult<Medicine>> => {
+    return apiFetch<Medicine>("/seller/medicines", {
       method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify(payload),
     });
   },
 };
 
-export default MedicinService;
+export default medicineService;
+
+
+ 

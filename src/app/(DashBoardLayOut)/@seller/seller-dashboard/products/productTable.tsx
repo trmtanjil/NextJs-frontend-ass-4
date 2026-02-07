@@ -1,5 +1,7 @@
 "use client";
 
+import { Medicine } from "@/types/medicine.type";
+
 interface IMedicine {
   id: string;
   name: string;
@@ -11,7 +13,7 @@ interface IMedicine {
   };
 }
 
-export default function MedicineTable({ medicines }: { medicines: IMedicine[] }) {
+export default function MedicineTable({ medicines }: { medicines: Medicine[] }) {
   return (
     <div className="overflow-x-auto border rounded-lg">
       <table className="min-w-full divide-y divide-gray-200">

@@ -13,7 +13,7 @@ export default async function CategoryPage({ params }: PageProps) {
   const { id: urlCategoryId } = await params;
   
   // ২. সার্ভিস কল করা (Fix: Params হিসেবে অবজেক্ট পাঠানো হয়েছে)
-  const { data: allMedicines, error } = await MedicinService.getAllMedicines({
+  const { data: allMedicines, error } = await MedicinService.getAll({
     categoryId: urlCategoryId, // এটি এখন GetMedicinesParams টাইপ অনুযায়ী সঠিক
   });
 

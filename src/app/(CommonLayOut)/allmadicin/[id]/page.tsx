@@ -13,7 +13,7 @@ export default async function Page({ params }: PageProps) {
   const { id } = await params
   
 
-  const { data: medicine, error } = await MedicinService.getMedicineById(id)
+  const { data: medicine, error } = await MedicinService.getById(id)
  
   if (error || !medicine) {
     return (

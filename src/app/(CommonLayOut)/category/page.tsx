@@ -2,7 +2,7 @@ import categoryService from '@/services/category.service';
 import { CategoryCard } from './CategoryCard';
 
 export default async function CategoryList() {
-  const { data: categories, error } = await categoryService.getAllCategories();
+  const { data: categories, error } = await categoryService.getAll();
 
   if (error) {
     return (
@@ -11,8 +11,7 @@ export default async function CategoryList() {
           <span className="text-2xl">⚠️</span>
         </div>
         <h3 className="text-xl font-semibold mb-2">Unable to Load Categories</h3>
-        <p className="text-gray-600">{error.message}</p>
-      </div>
+       </div>
     );
   }
 

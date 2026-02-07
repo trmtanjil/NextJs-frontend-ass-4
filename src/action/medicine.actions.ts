@@ -1,91 +1,84 @@
 "use server";
 
-import MedicinService from "@/services/medicine.service";
-import { userService } from "@/services/user.service";
+import medicineService from "@/services/medicine.service";
 import { revalidatePath } from "next/cache";
+import { Medicine } from "@/types/medicine.type";
+import { userService } from "@/services/user.service";
 
-// ===========================
-// Type Definitions
-// ===========================
-
-export interface Medicine {
-  _id: string;
-  name: string;
-  description?: string;
-  price: number;
-  categoryId?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
+/* =====================
+   Params Types
+===================== */
 export interface GetMedicinesParams {
   search?: string;
   categoryId?: string;
-  minPrice?: string | number;
-  maxPrice?: string | number;
+  minPrice?: number;
+  maxPrice?: number;
   page?: number;
   limit?: number;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
 }
 
-export interface ApiResponse<T> {
+export interface ActionResponse<T> {
   success: boolean;
   message?: string;
   data: T | null;
 }
 
-export type CreateMedicinePayload = {
-  name: string;
-  price: number;
-  description?: string;
-  categoryId?: string;
-};
-
-// ===========================
-// Get All Medicines Action
-// ===========================
+/* =====================
+   Get All Medicines
+===================== */
 export async function getAllMedicinesAction(
   params?: GetMedicinesParams
-): Promise<ApiResponse<Medicine[]>> {
-  const { data, error } = await MedicinService.getAllMedicines(params) as {
-    data: Medicine[] | null;
-    error: string | null;
-  };
+): Promise<ActionResponse<Medicine[]>> {
+  const { data, error } = await medicineService.getAll(params);
 
   if (error) {
-    return { success: false, message: error, data: null };
+    return {
+      success: false,
+      message: error,
+      data: null,
+    };
   }
 
-  return { success: true, data };
+  return {
+    success: true,
+    data: data ?? [],
+  };
 }
 
-// ===========================
-// Create Medicine Action
-// ===========================
+/* =====================
+   Create Medicine
+===================== */
 export async function createMedicineAction(
-  payload: CreateMedicinePayload
-): Promise<ApiResponse<Medicine>> {
-  // ১. সেশন থেকে টোকেন সংগ্রহ
-  const sessionResponse = await userService.getSession();
-  const token = sessionResponse?.data?.session?.token;
+  payload: Partial<Medicine>
+): Promise<ActionResponse<Medicine>> {
+  // ✅ Auth only here
+  const session = await userService.getSession();
+  const token = session?.data?.session?.token;
 
   if (!token) {
-    return { success: false, message: "Token not found. Please login again.", data: null };
+    return {
+      success: false,
+      message: "Please login again",
+      data: null,
+    };
   }
 
-  // ২. সার্ভিস কল
-  const { data, error } = await MedicinService.createMedicine(payload) as {
-    data: Medicine | null;
-    error: string | null;
-  };
+  const { data, error } = await medicineService.create(payload, token);
 
   if (error) {
-    return { success: false, message: error, data: null };
+    return {
+      success: false,
+      message: error,
+      data: null,
+    };
   }
 
-  // ৩. Page revalidation
   revalidatePath("/seller-dashboard/products");
 
-  return { success: true, data };
+  return {
+    success: true,
+    data,
+  };
 }

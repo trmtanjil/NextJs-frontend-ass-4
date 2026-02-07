@@ -2,7 +2,7 @@ import MedicinService from "@/services/medicine.service";
 import MedicineTable from "./productTable";
 
 export default async function AllProductpage() {
-  const { data, error } = await MedicinService.getAllMedicines();
+  const { data, error } = await MedicinService.getAll();
 
   // যদি ডাটা না থাকে বা এরর হয়
   if (error) return <div className="text-red-500">Error:</div>;
