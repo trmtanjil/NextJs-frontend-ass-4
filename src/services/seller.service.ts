@@ -3,17 +3,17 @@ import { cookies } from "next/headers";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-/* =====================
+/*  
    Common Result Type
-===================== */
+ */
 export interface ServiceResult<T> {
   data: T | null;
   error: string | null;
 }
 
-/* =====================
+/*  
    Generic Fetch
-===================== */
+ */
 async function apiFetch<T>(
   endpoint: string,
   options: RequestInit = {}
@@ -55,9 +55,9 @@ async function apiFetch<T>(
   }
 }
 
-/* =====================
+/*  
    Seller Service
-===================== */
+  */
 export const sellerService = {
   // GET seller orders
   getSellerOrders: async (): Promise<ServiceResult<OrderItem[]>> => {

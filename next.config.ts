@@ -1,5 +1,4 @@
-import "./src/env"
-import type { NextConfig } from "next"
+ import type { NextConfig } from "next"
 
 const config: NextConfig = {
   images: {
@@ -15,7 +14,7 @@ const config: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "http://localhost:5000/api/:path*",
+        destination: "https://medicareshope.vercel.app/api/:path*",
       },
     ]
   },

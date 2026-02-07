@@ -5,9 +5,9 @@ import { revalidatePath } from "next/cache";
 import { Medicine } from "@/types/medicine.type";
 import { userService } from "@/services/user.service";
 
-/* =====================
+/*  
    Params Types
-===================== */
+  */
 export interface GetMedicinesParams {
   search?: string;
   categoryId?: string;
@@ -25,9 +25,9 @@ export interface ActionResponse<T> {
   data: T | null;
 }
 
-/* =====================
+/* 
    Get All Medicines
-===================== */
+ */
 export async function getAllMedicinesAction(
   params?: GetMedicinesParams
 ): Promise<ActionResponse<Medicine[]>> {
@@ -47,15 +47,17 @@ export async function getAllMedicinesAction(
   };
 }
 
-/* =====================
+/*  
    Create Medicine
-===================== */
+  */
 export async function createMedicineAction(
   payload: Partial<Medicine>
 ): Promise<ActionResponse<Medicine>> {
-  // ✅ Auth only here
+  //  Auth only here
   const session = await userService.getSession();
   const token = session?.data?.session?.token;
+  console.log("t",session)
+  console.log("t",token)
 
   if (!token) {
     return {

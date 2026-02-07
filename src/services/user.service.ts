@@ -22,6 +22,7 @@ interface ServiceOptions {
 const getCookieHeader = async () => {
   try {
     const cookieStore = await cookies();
+    console.log("cookie",cookieStore)
     const cookieArray = cookieStore.getAll().map((c) => `${c.name}=${c.value}`);
     return cookieArray.join("; ");
   } catch (err) {
@@ -29,7 +30,6 @@ const getCookieHeader = async () => {
     return "";
   }
 };
-
 /**
  * Helper to handle fetch responses safely
  */

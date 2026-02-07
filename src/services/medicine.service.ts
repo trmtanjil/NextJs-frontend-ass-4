@@ -5,17 +5,17 @@ import { GetMedicinesParams } from "@/action/medicine.actions";
 
 const API_URL = process.env.API_URL;
 
-/* =====================
+/* 
    Common Result Type
-===================== */
+ */
 export interface ServiceResult<T> {
   data: T | null;
   error: string | null;
 }
 
-/* =====================
+/*  
    Generic Fetch
-===================== */
+  */
 async function apiFetch<T>(
   endpoint: string,
   options: RequestInit = {}
@@ -62,9 +62,9 @@ async function apiFetch<T>(
   }
 }
 
-/* =====================
+/* 
    Query Builder
-===================== */
+  */
 function buildQuery(params?: GetMedicinesParams) {
   if (!params) return "";
 
@@ -79,11 +79,10 @@ function buildQuery(params?: GetMedicinesParams) {
   return query.toString();
 }
 
-/* =====================
+/*  
    Medicine Service
-===================== */
-// src/services/medicine.service.ts
-const medicineService = {
+  */
+ const medicineService = {
   getAll: async (params?: GetMedicinesParams) => {
     const query = buildQuery(params);
     const endpoint = query ? `/medicines?${query}` : "/medicines";

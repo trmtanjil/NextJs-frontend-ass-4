@@ -29,7 +29,7 @@ export async function adminUpdateUserStatusAction(
   userId: string,
   payload: { status: string },
 ) {
-  // userService কল করার সময় সরাসরি payload অবজেক্টটি পাস করো
+  // userService    
   const { data, error } = await userService.adminUpdateUserStatus(
     userId,
     payload
@@ -43,8 +43,8 @@ export async function adminUpdateUserStatusAction(
     };
   }
 
-  // ডাটা আপডেট হওয়ার পর টেবিলটি রিফ্রেশ করার জন্য পাথটি রিভ্যালিডেট করো
-  revalidatePath("/admin-dashboard/users"); // তোমার ইউজার লিস্ট পেজের সঠিক পাথটি দাও
+   
+  revalidatePath("/admin-dashboard/users"); //   ইউজার লিস্ট পেজের সঠিক পাথ 
 
   return { success: true, data };
 }
