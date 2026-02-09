@@ -1,113 +1,83 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL  
+// src/services/order.service.ts
 
+import { OrderItem } from "@/types/order.type";
 
+const API_URL = process.env.API_URL;
 
-
-interface ServiceOptions {
-  cache?: RequestCache;
-  revalidate?: number;
+export interface ActionResponse<T> {
+  success: boolean;
+  data?: T | null;     // data থাকতে বা না থাকতে পারে
+  error?: string;      // error message optional
 }
-
-export interface GetAllOrdersParams {
-  page?: number;
-  limit?: number;
-  status?: OrderStatus;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
+export interface ApiResponse<T> {
+  success?: boolean;
+  message?: string;
+  data?: T;
 }
-
-export type OrderStatus = "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
-
-
-
-async function apiFetch<T>(
-  endpoint: string,
-  options: RequestInit = {},
-): Promise<{
-  data: T | null;
-  error: { message: string; status?: number } | null;
-}> {
-  try {
-    const headers = new Headers(options.headers);
-    if (!headers.has("Content-Type")) {
-      headers.set("Content-Type", "application/json");
-    }
-
-    const res = await fetch(`${API_URL}${endpoint}`, {
-      // এটি ক্লায়েন্ট সাইড থেকে কুকি পাঠানোর জন্য যথেষ্ট
-      credentials: "include", 
-      ...options,
-      headers,
-    });
-
-    const result = await res.json();
-
-    if (!res.ok) {
-      throw new Error(result.message || res.statusText);
-    }
-
-    return { data: result, error: null };
-  } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : "Something went wrong";
-    const statusValue = err instanceof Error && 'status' in err ? (err as Record<string, unknown>).status : undefined;
-    const errorStatus = typeof statusValue === 'number' ? statusValue : undefined;
-    return {
-      data: null,
-      error: {
-        message: errorMessage,
-        status: errorStatus,
-      },
-    };
-  }
-}
-
 export interface CreateOrderPayload {
   address: string;
-  items: {
-    medicineId: string;
-    quantity: number;
-  }[];
+  items: { medicineId: string; quantity: number }[];
 }
 
 export interface Order {
   id: string;
   totalAmount: number;
-  status: string;
+  status: "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
   createdAt: string;
   orderItems?: OrderItem[];
+  user?: { name: string; email: string }; // অ্যাডমিন ভিউর জন্য
 }
 
-export interface OrderItem {
-  id: string;
-  quantity: number;
-  unitPrice: number;
-  medicine?: {
-    name: string;
-  };
-}
+export type OrderStatus = "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
-export interface OrderResponse {
-  data: (Order & { orderItems?: OrderItem[] })[];
+async function apiFetch<T>(
+  endpoint: string,
+  options: RequestInit = {},
+  cookieHeader?: string // কুকি এখন প্যারামিটার হিসেবে আসবে
+): Promise<{ data: T | null; error: { message: string } | null }> {
+  try {
+    if (!API_URL) throw new Error("API_URL is missing");
+
+    const headers = new Headers(options.headers);
+    headers.set("Content-Type", "application/json");
+    if (cookieHeader) headers.set("Cookie", cookieHeader);
+
+    const res = await fetch(`${API_URL}${endpoint}`, {
+      ...options,
+      headers,
+    });
+
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.message || "Request failed");
+
+    return { data: result, error: null };
+  } catch (err) {
+    return { data: null, error: { message: "Something went wrong" } };
+  }
 }
 
 export const orderService = {
-  createOrder: async (orderData: CreateOrderPayload) => {
-    return apiFetch<{ message: string }>("/order", {
+  createOrder: async (payload: CreateOrderPayload, cookie: string) => {
+    return apiFetch("/order", {
       method: "POST",
-      body: JSON.stringify(orderData),
-    });
+      body: JSON.stringify(payload),
+    }, cookie);
   },
 
-getmyorder: async () => {
-    return apiFetch<OrderResponse>("/order", { method: "GET" });
+  getMyOrders: async (cookie: string) => {
+    return apiFetch("/order", { method: "GET" }, cookie); 
+     
   },
-
-getSingleOrder: async (id: string) => {
-  return apiFetch<Order>(`/order/${id}`, {
-    method: "GET",
-  });
-}
-
-
   
+ getAllOrders: async (cookie: string) => {
+    // এখানে apiFetch<ApiResponse<Order[]>> নিশ্চিত করছে ডাটা একটি অর্ডার অ্যারে
+    return apiFetch<ApiResponse<Order[]>>("/order", { method: "GET" }, cookie);
+  },
+  
+  updateOrderStatus: async (orderId: string, status: OrderStatus, cookie: string) => {
+    return apiFetch(`/orders/${orderId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    }, cookie);
+  },
 };

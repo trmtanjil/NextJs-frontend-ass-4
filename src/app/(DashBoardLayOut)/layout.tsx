@@ -21,12 +21,12 @@ import { AppSidebar } from "@/components/layout/app-sidebar";
 export const dynamic = 'force-dynamic';
   
 export default async function DashboardLayout({
-  children,
+  
   admin,
   customer,
   seller
 }: {
-  children: React.ReactNode;
+  
   admin: React.ReactNode;
     customer: React.ReactNode;
       seller: React.ReactNode;
@@ -66,7 +66,7 @@ export default async function DashboardLayout({
   ? seller
   : null}
         </div>
-  {children}
+  
       </SidebarInset>
     </SidebarProvider>
   );

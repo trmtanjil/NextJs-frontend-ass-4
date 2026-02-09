@@ -1,4 +1,4 @@
-import { UserRoleAction } from "./UserRoleAction";
+import { UserRoleAction } from "../UserRoleAction";
 
 export interface User {
   id: string;

@@ -22,7 +22,7 @@ export interface GetMedicinesParams {
 export interface ActionResponse<T> {
   success: boolean;
   message?: string;
-  data: T | null;
+  data?: T | null;
 }
 
 /* 

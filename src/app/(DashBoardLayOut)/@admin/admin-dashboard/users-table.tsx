@@ -2,7 +2,7 @@
 
  import { useRouter, useSearchParams } from "next/navigation";
  import { DataTable, Meta } from "@/components/table/data-table";
-import { columns, User } from "./users-columns";
+import { columns, User } from "./users/users-columns";
 
 interface UsersTableProps {
   users: User[];

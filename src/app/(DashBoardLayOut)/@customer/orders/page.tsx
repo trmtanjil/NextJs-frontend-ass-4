@@ -1,146 +1,104 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { orderService } from "@/services/order.service";
 import { toast } from "sonner";
-import { Eye, Loader2, Package } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import DetailsOrderPage from "./detalsOrder";
-
-interface OrderItem {
-  id: string;
-  quantity: number;
-  unitPrice: number;
-  medicine?: {
-    name: string;
-  };
+import { Loader2, User, ShoppingBasket } from "lucide-react";
+import { getAllOrdersAction } from "@/action/order.action";
+import { Order } from "@/services/order.service";
+ 
+export interface ActionResponse<T> {
+  success: boolean;
+  data?: T | null;     // data থাকতে বা না থাকতে পারে
+  error?: string;      // error message optional
 }
-
-interface OrderWithItems {
-  id: string;
-  totalAmount: number;
-  status: string;
-  createdAt: string;
-  orderItems?: OrderItem[];
-}
-
-export default  function MyOrdersPage() {
-  const [orders, setOrders] = useState<OrderWithItems[]>([]);
+export default function AllOrdersPage() {
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
-
-  // মডালের জন্য স্টেট
-  const [selectedOrder, setSelectedOrder] = useState<OrderWithItems | null>(null);
-  const [modalLoading, setModalLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  console.log("select",selectedOrder)
   useEffect(() => {
-    const fetchOrders = async () => {
-      const { data, error } = await orderService.getmyorder();
-      if (error) {
-        toast.error(error.message);
-      } else if (data) {
-         setOrders(data.data);
+    async function fetchOrders() {
+      const res: ActionResponse<Order[]> = await getAllOrdersAction();
+
+      if (res.success && res.data) {
+        setOrders(res.data);
+      } else if (res.error) {
+        toast.error(res.error);
+      } else {
+        toast.error("Something went wrong");
       }
+
       setLoading(false);
-    };
+    }
     fetchOrders();
   }, []);
 
-// সিঙ্গেল অর্ডার ফেচ করার ফাংশন
-  const handleViewDetails = async (orderId: string) => {
-    setIsModalOpen(true);
-    setModalLoading(true);
-    setSelectedOrder(null);
-    
-    try {
-      const { data, error } = await orderService.getSingleOrder(orderId);
-      
-      if (error) {
-        toast.error(error.message || "Could not fetch details");
-      } else if (data) {
-        setSelectedOrder(data as OrderWithItems);
-      }
-    } catch (err) {
-      toast.error("An error occurred while fetching order details");
-    } finally {
-      setModalLoading(false);
-    }
-  };
-
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader2 className="animate-spin w-10 h-10 text-primary" />
-      </div>
-    );
-  }
-
-  if (orders.length === 0) {
-    return (
-      <div className="text-center p-20">
-        <Package className="mx-auto w-16 h-16 text-gray-300" />
-        <h2 className="text-xl font-semibold mt-4">No orders found!</h2>
+      <div className="flex justify-center items-center h-[60vh]">
+        <Loader2 className="animate-spin w-10 h-10 text-amber-500" />
       </div>
     );
   }
 
   return (
-  <div className="container mx-auto p-6 max-w-5xl">
-      <h1 className="text-3xl font-bold mb-8">My Order History</h1>
-      
-      <div className="grid gap-6">
-        {orders.map((order) => (
-          <div key={order.id} className="border rounded-2xl p-6 bg-white shadow-sm hover:shadow-md transition">
-            <div className="flex flex-wrap justify-between items-center">
-              <div>
-                <p className="text-sm text-gray-500">Order ID: <span className="font-mono text-black">#{order.id.slice(-8).toUpperCase()}</span></p>
-                <p className="text-lg font-bold text-primary">${order.totalAmount.toFixed(2)}</p>
-              </div>
-              
-              <div className="flex items-center gap-4">
-                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
-                  order.status === 'DELIVERED' ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600'
-                }`}>
-                  {order.status}
-                </span>
-                
-                {/* ভিউ ডিটেইলস বাটন */}
-                <Button className="text-black" variant="outline" size="sm" onClick={() => handleViewDetails(order.id)}>
-                  <Eye className="w-4 h-4 mr-2 text-black" /> Details
-                </Button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="container mx-auto p-6 text-black">
+      <h1 className="text-3xl font-bold mb-8 text-amber-600 flex items-center gap-2">
+        <ShoppingBasket /> All Orders
+      </h1>
 
-      {/* --- সিঙ্গেল অর্ডার ডিটেইলস মডাল --- */}
-    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-  <DialogContent className="max-w-md bg-white rounded-3xl">
-    <DialogHeader>
-      <DialogTitle className="text-2xl font-extrabold text-gray-900">Order Summary</DialogTitle>
-    </DialogHeader>
-
-    {modalLoading ? (
-      <div className="flex flex-col justify-center items-center p-12 space-y-4">
-        <Loader2 className="animate-spin text-primary w-10 h-10" />
-        <p className="text-sm text-gray-500 animate-pulse">Fetching details...</p>
+      <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
+        <table className="w-full text-left">
+          <thead className="bg-gray-50 border-b">
+            <tr className="text-gray-600 text-sm uppercase">
+              <th className="p-4 font-semibold">Order ID</th>
+              <th className="p-4 font-semibold">Customer</th>
+              <th className="p-4 font-semibold">Date</th>
+              <th className="p-4 font-semibold">Amount</th>
+              <th className="p-4 font-semibold">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map((order) => (
+              <tr key={order.id} className="border-b hover:bg-gray-50 transition-colors">
+                <td className="p-4 font-mono text-xs text-gray-500">
+                  #{order.id.slice(-6).toUpperCase()}
+                </td>
+                <td className="p-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+                      <User size={14} />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">{order.user?.name || "Guest User"}</p>
+                      <p className="text-[10px] text-gray-400">{order.user?.email}</p>
+                    </div>
+                  </div>
+                </td>
+                <td className="p-4 text-sm text-gray-500">
+                  {new Date(order.createdAt).toLocaleDateString()}
+                </td>
+                <td className="p-4 font-bold text-amber-600">
+                  ${order.totalAmount.toFixed(2)}
+                </td>
+                <td className="p-4">
+                  <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${
+                    order.status === "DELIVERED" 
+                      ? "bg-green-100 text-green-700" 
+                      : order.status === "CANCELLED"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-blue-100 text-blue-700"
+                  }`}>
+                    {order.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {orders.length === 0 && (
+          <div className="p-10 text-center text-gray-400">No orders found.</div>
+        )}
       </div>
-    ) : selectedOrder ? (
-      <DetailsOrderPage order={selectedOrder} /> // এখানে আমাদের নতুন কম্পোনেন্টটি কল করলাম
-    ) : (
-      <div className="text-center p-10 text-gray-400">No data found</div>
-    )}
-  </DialogContent>
-</Dialog>
     </div>
   );
 }
