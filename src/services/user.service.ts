@@ -124,13 +124,13 @@ export const userService = {
 
   adminUpdateUserStatus: async function (
     id: string,
-    payload: { status: string },
+    payload: { role: "ADMIN" | "SELLER" | "CUSTOMER" },
   ) {
     try {
       const cookieHeader = await getCookieHeader();
 
       const res = await fetch(`${API_URL}/admin/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Cookie: cookieHeader,

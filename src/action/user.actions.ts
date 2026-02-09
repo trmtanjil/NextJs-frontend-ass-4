@@ -25,26 +25,21 @@ export async function getUserByIdAction(userId: string) {
 }
 
 
+// user.actions.ts
 export async function adminUpdateUserStatusAction(
   userId: string,
-  payload: { status: string },
+  payload: { role: "ADMIN" | "SELLER" | "CUSTOMER" }, // <-- পরিবর্তন
 ) {
-  // userService    
-  const { data, error } = await userService.adminUpdateUserStatus(
-    userId,
-    payload
-  );
- 
+  const { data, error } = await userService.adminUpdateUserStatus(userId, payload);
 
   if (error) {
     return { 
       success: false, 
-      error: typeof error === 'string' ? error : error.message || "Failed to update status" 
+      error: typeof error === "string" ? error : error.message || "Failed to update status" 
     };
   }
 
-   
-  revalidatePath("/admin-dashboard/users"); //   ইউজার লিস্ট পেজের সঠিক পাথ 
-
+  revalidatePath("/admin-dashboard/users");
   return { success: true, data };
 }
+

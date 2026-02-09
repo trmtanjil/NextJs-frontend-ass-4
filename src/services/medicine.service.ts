@@ -74,6 +74,7 @@ function buildQuery(params?: GetMedicinesParams) {
 /*  
    Medicine Service
   */
+ 
  const medicineService = {
   getAll: async (params?: GetMedicinesParams) => {
     const query = buildQuery(params);
