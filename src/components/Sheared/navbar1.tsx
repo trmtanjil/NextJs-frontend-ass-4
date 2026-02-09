@@ -1,20 +1,14 @@
 "use client";
 
-import {   Menu,   } from "lucide-react";
-
+import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-import {
-  Accordion,
- 
-} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
-   NavigationMenuItem,
+  NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
- } from "@/components/ui/navigation-menu";
+} from "@/components/ui/navigation-menu";
 import {
   Sheet,
   SheetContent,
@@ -24,202 +18,116 @@ import {
 } from "@/components/ui/sheet";
 import Link from "next/link";
 import { ModeToggle } from "../layout/ModeToggle";
+import { authClient } from "@/lib/auth-client"; // আপনার Better-Auth ক্লায়েন্ট পাথ
+import { useRouter } from "next/navigation";
 
-interface MenuItem {
-  title: string;
-  url: string;
-  description?: string;
-  icon?: React.ReactNode;
-  items?: MenuItem[];
-}
-interface Navbar1Props1 {
-  user?: {
-    id: string;
-    role?: string;
-  } | null;
-}
+const Navbar = ({ className }: { className?: string }) => {
+  // Better-Auth থেকে সেশন ডাটা আনা
+  const { data: session, isPending } = authClient.useSession();
+  const router = useRouter();
 
-interface Navbar1Props {
-  className?: string;
-  logo?: {
-    url: string;
-    src: string;
-    alt: string;
-    title: string;
-    className?: string;
+  const handleLogout = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/Login"); // লগআউট হলে লগইন পেজে পাঠাবে
+        },
+      },
+    });
   };
-  menu?: MenuItem[];
-  auth?: {
-    login: {
-      title: string;
-      url:string;
-    };
-    signup: {
-      title: string;
-      url: string;
-    };
-  };
-}
 
-const Navbar = ({
-  logo = {
-    url: "/",
-    src: "https://i.ibb.co.com/rGRZwXJB/Chat-GPT-Image-Feb-6-2026-01-24-37-AM.png",
-    alt: "logo",
-    title: "MediCare",
-  },
-  menu = [
-    { title: "Home", url: "/#" },
-    {
-      title: "About",
-      url: "/about",
-    
-    },
-    {
-      title: "All Madicin",
-      url: "/allmadicin",
-    
-    },
- 
-    {
-      title: "card",
-      url: "/card",
-    },
-    {
-      title:"deshboard",
-      url:"/dashboard"
-    },
-   
-  ],
-  auth = {
-    login: { title: "Login", url: "/Login" },
-    signup: { title: "register", url: "/register" },
-  },
-  className,
-}: Navbar1Props) => {
-
-
-  
+  const menu = [
+    { title: "Home", url: "/" },
+    { title: "About", url: "/about" },
+    { title: "All Medicine", url: "/allmadicin" },
+    { title: "Cart", url: "/card" },
+    // শুধুমাত্র লগইন থাকলে ড্যাশবোর্ড দেখাবে
+    ...(session ? [{ title: "Dashboard", url: "/dashboard" }] : []),
+  ];
 
   return (
-    <section className={cn("py-4", className)}>
+    <section className={cn("py-4 border-b", className)}>
       <div className="container mx-auto px-4">
-        {/* Desktop Menu */}
-        <nav className="hidden items-center justify-between lg:flex">
+        <nav className="flex items-center justify-between">
           <div className="flex items-center gap-6">
             {/* Logo */}
-            <a href={logo.url} className="flex items-center gap-2">
-              <img
-                src={logo.src}
-                className="max-h-8 dark:invert"
-                alt={logo.alt}
-              />
-              <span className="text-lg font-semibold tracking-tighter">
-                {logo.title}
-              </span>
-            </a>
-            <div className="flex items-center">
+            <Link href="/" className="flex items-center gap-2">
+              <img src="https://i.ibb.co.com/rGRZwXJB/Chat-GPT-Image-Feb-6-2026-01-24-37-AM.png" className="max-h-8" alt="logo" />
+              <span className="text-lg font-semibold uppercase">MediCare</span>
+            </Link>
+
+            {/* Desktop Menu */}
+            <div className="hidden lg:block">
               <NavigationMenu>
-                <NavigationMenuList>
-                  {menu.map((item) => renderMenuItem(item))}
+                <NavigationMenuList className="flex gap-2">
+                  {menu.map((item) => (
+                    <NavigationMenuItem key={item.title}>
+  <NavigationMenuLink asChild>
+    <Link href={item.url} className="px-4 py-2 text-sm font-medium hover:text-amber-600 transition-colors">
+      {item.title}
+    </Link>
+  </NavigationMenuLink>
+</NavigationMenuItem>
+
+                  ))}
                 </NavigationMenuList>
               </NavigationMenu>
             </div>
           </div>
-          <div className="flex gap-2">
-            <ModeToggle></ModeToggle>
-            <Button asChild variant="outline" size="sm">
-              <Link href={auth.login.url}>{auth.login.title}</Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link href={auth.signup.url}>{auth.signup.title}</Link>
-            </Button>
-          </div>
-        </nav>
 
-        {/* Mobile Menu */}
-        <div className="block lg:hidden">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <a href={logo.url} className="flex items-center gap-2">
-              <img
-                src={logo.src}
-                className="max-h-8 dark:invert"
-                alt={logo.alt}
-              />
-            </a>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Menu className="size-4" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="overflow-y-auto">
-                <SheetHeader>
-                  <SheetTitle>
-                    <a href={logo.url} className="flex items-center gap-2">
-                      <img
-                        src={logo.src}
-                        className="max-h-8 dark:invert"
-                        alt={logo.alt}
-                      />
-                    </a>
-                  </SheetTitle>
-                </SheetHeader>
-                <div className="flex flex-col gap-6 p-4">
-                  <Accordion
-                    type="single"
-                    collapsible
-                    className="flex w-full flex-col gap-4"
-                  >
-                    {menu.map((item) => renderMobileMenuItem(item))}
-                  </Accordion>
+          <div className="flex items-center gap-2">
+            <ModeToggle />
 
-                  <div className="flex flex-col gap-3">
-                    <Button asChild variant="outline">
-                      <Link href={auth.login.url}>{auth.login.title}</Link>
+            {/* সেশন অনুযায়ী বাটন পরিবর্তন */}
+            {!isPending && (
+              <>
+                {session ? (
+                  <Button onClick={handleLogout} variant="destructive" size="sm">
+                    Logout
+                  </Button>
+                ) : (
+                  <div className="hidden lg:flex gap-2">
+                    <Button asChild variant="outline" size="sm">
+                      <Link href="/Login">Login</Link>
                     </Button>
-                    <Button asChild>
-                      <Link href={auth.signup.url}>{auth.signup.title}</Link>
+                    <Button asChild size="sm">
+                      <Link href="/register">Register</Link>
                     </Button>
                   </div>
-                </div>
-              </SheetContent>
-            </Sheet>
+                )}
+              </>
+            )}
+
+            {/* Mobile Menu Trigger */}
+            <div className="lg:hidden">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="icon"><Menu className="size-4" /></Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <div className="flex flex-col gap-4 mt-8">
+                    {menu.map((item) => (
+                      <Link key={item.title} href={item.url} className="text-lg font-semibold border-b pb-2">
+                        {item.title}
+                      </Link>
+                    ))}
+                    {!session ? (
+                      <>
+                        <Button asChild variant="outline"><Link href="/Login">Login</Link></Button>
+                        <Button asChild><Link href="/register">Register</Link></Button>
+                      </>
+                    ) : (
+                      <Button onClick={handleLogout} variant="destructive">Logout</Button>
+                    )}
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
-        </div>
+        </nav>
       </div>
     </section>
   );
 };
 
-const renderMenuItem = (item: MenuItem) => {
- 
-
-  return (
-    <NavigationMenuItem key={item.title}>
-      <NavigationMenuLink
-       asChild
-        className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground"
-      >
-      <Link href={item.url}> {item.title}</Link> 
-      </NavigationMenuLink>
-    </NavigationMenuItem>
-  );
-};
-
-const renderMobileMenuItem = (item: MenuItem) => {
- 
-
-  return (
-    <Link key={item.title} href={item.url} className="text-md font-semibold">
-      {item.title}
-    </Link>
-  );
-};
-
- 
-
 export { Navbar };
-
-
