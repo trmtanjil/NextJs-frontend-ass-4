@@ -12,8 +12,7 @@ import {
 import {
   Sheet,
   SheetContent,
-  SheetHeader,
-  SheetTitle,
+ 
   SheetTrigger,
 } from "@/components/ui/sheet";
 import Link from "next/link";
@@ -30,20 +29,21 @@ const Navbar = ({ className }: { className?: string }) => {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.push("/Login"); // লগআউট হলে লগইন পেজে পাঠাবে
+          router.push("/Login"); 
         },
       },
     });
   };
 
-  const menu = [
-    { title: "Home", url: "/" },
-    { title: "About", url: "/about" },
-    { title: "All Medicine", url: "/allmadicin" },
+const menu = [
+  { title: "Home", url: "/" },
+  { title: "About", url: "/about" },
+  // শুধু লগইন থাকলে দেখাবে
+  ...(session ? [
     { title: "Cart", url: "/card" },
-    // শুধুমাত্র লগইন থাকলে ড্যাশবোর্ড দেখাবে
-    ...(session ? [{ title: "Dashboard", url: "/dashboard" }] : []),
-  ];
+    { title: "Dashboard", url: "/dashboard" }
+  ] : []),
+];
 
   return (
     <section className={cn("py-4 border-b", className)}>
