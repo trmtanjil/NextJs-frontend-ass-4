@@ -32,6 +32,12 @@ interface MenuItem {
   icon?: React.ReactNode;
   items?: MenuItem[];
 }
+interface Navbar1Props1 {
+  user?: {
+    id: string;
+    role?: string;
+  } | null;
+}
 
 interface Navbar1Props {
   className?: string;
@@ -91,6 +97,10 @@ const Navbar = ({
   },
   className,
 }: Navbar1Props) => {
+
+
+  
+
   return (
     <section className={cn("py-4", className)}>
       <div className="container mx-auto px-4">
