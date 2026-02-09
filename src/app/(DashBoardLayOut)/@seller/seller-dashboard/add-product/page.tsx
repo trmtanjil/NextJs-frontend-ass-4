@@ -7,13 +7,14 @@ import { Button } from "@/components/ui/button";
 import { createMedicineAction } from "@/action/medicine.actions";
 
 /* ===========================
-   Form Data Type (CLIENT ONLY)
+   Form Data Type (CLIENT)
 =========================== */
 interface MedicineFormData {
   name: string;
   price: number;
   stock: number;
-  categoryId?: string;
+  expiryDate: string; // 👈 REQUIRED
+  categoryId: string;
   description?: string;
   image?: string;
 }
@@ -28,19 +29,23 @@ export default function SellerAdd() {
 
   const router = useRouter();
 
+  /* ===========================
+     Submit Handler
+  =========================== */
   const onSubmit: SubmitHandler<MedicineFormData> = async (data) => {
-    // 🔥 payload clean & simple
     const payload = {
       name: data.name,
       price: Number(data.price),
       stock: Number(data.stock),
+      expiryDate: new Date(data.expiryDate).toISOString(), // ✅ FIX
       categoryId: data.categoryId,
       description: data.description,
       image: data.image,
     };
+    console.log(payload)
 
     const res = await createMedicineAction(payload);
-
+console.log(res)
     if (res.success) {
       toast.success("Medicine added successfully!");
       reset();
@@ -55,48 +60,86 @@ export default function SellerAdd() {
       <h1 className="text-2xl font-bold mb-6">Add New Medicine</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        {/* Name */}
-        <input
-          {...register("name", { required: "Name is required" })}
-          placeholder="Medicine Name"
-          className="w-full p-3 border rounded-xl"
-        />
-        {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
+        {/* Medicine Name */}
+        <div>
+          <input
+            {...register("name", { required: "Name is required" })}
+            placeholder="Medicine Name"
+            className="w-full p-3 border rounded-xl"
+          />
+          {errors.name && (
+            <p className="text-red-500 text-xs">{errors.name.message}</p>
+          )}
+        </div>
 
         {/* Price */}
-        <input
-          type="number"
-          {...register("price", { required: "Price is required" })}
-          placeholder="Price"
-          className="w-full p-3 border rounded-xl"
-        />
+        <div>
+          <input
+            type="number"
+            step="0.01"
+            {...register("price", { required: "Price is required" })}
+            placeholder="Price"
+            className="w-full p-3 border rounded-xl"
+          />
+          {errors.price && (
+            <p className="text-red-500 text-xs">{errors.price.message}</p>
+          )}
+        </div>
 
         {/* Stock */}
-        <input
-          type="number"
-          {...register("stock", { required: "Stock is required" })}
-          placeholder="Stock"
-          className="w-full p-3 border rounded-xl"
-        />
+        <div>
+          <input
+            type="number"
+            {...register("stock", { required: "Stock is required" })}
+            placeholder="Stock"
+            className="w-full p-3 border rounded-xl"
+          />
+          {errors.stock && (
+            <p className="text-red-500 text-xs">{errors.stock.message}</p>
+          )}
+        </div>
 
-        {/* Category */}
-        <input
-          {...register("categoryId")}
-          placeholder="Category ID"
-          className="w-full p-3 border rounded-xl"
-        />
+        {/* Expiry Date */}
+        <div>
+          <input
+            type="date"
+            {...register("expiryDate", {
+              required: "Expiry date is required",
+            })}
+            className="w-full p-3 border rounded-xl"
+          />
+          {errors.expiryDate && (
+            <p className="text-red-500 text-xs">
+              {errors.expiryDate.message}
+            </p>
+          )}
+        </div>
+
+        {/* Category ID */}
+        <div>
+          <input
+            {...register("categoryId", { required: "Category is required" })}
+            placeholder="Category ID"
+            className="w-full p-3 border rounded-xl"
+          />
+          {errors.categoryId && (
+            <p className="text-red-500 text-xs">
+              {errors.categoryId.message}
+            </p>
+          )}
+        </div>
 
         {/* Image */}
         <input
           {...register("image")}
-          placeholder="Image URL"
+          placeholder="Image URL (optional)"
           className="w-full p-3 border rounded-xl"
         />
 
         {/* Description */}
         <textarea
           {...register("description")}
-          placeholder="Description"
+          placeholder="Description (optional)"
           rows={4}
           className="w-full p-3 border rounded-xl"
         />

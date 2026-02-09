@@ -41,7 +41,7 @@ export default function LoginForm() {
   const handleGoogleLogin = async () => {
     await authClient.signIn.social({
       provider: "google",
-       callbackURL:"http://localhost:3000"
+       callbackURL:"https://next-js-frontend-ass-4.vercel.app"
     });
   };
 

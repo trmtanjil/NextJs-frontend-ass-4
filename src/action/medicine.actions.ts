@@ -53,34 +53,12 @@ export async function getAllMedicinesAction(
 export async function createMedicineAction(
   payload: Partial<Medicine>
 ): Promise<ActionResponse<Medicine>> {
-  //  Auth only here
-  const session = await userService.getSession();
-  const token = session?.data?.session?.token;
-  console.log("t",session)
-  console.log("t",token)
-
-  if (!token) {
-    return {
-      success: false,
-      message: "Please login again",
-      data: null,
-    };
-  }
-
-  const { data, error } = await medicineService.create(payload, token);
+  const { data, error } = await medicineService.create(payload);
 
   if (error) {
-    return {
-      success: false,
-      message: error,
-      data: null,
-    };
+    return { success: false, message: error, data: null };
   }
 
   revalidatePath("/seller-dashboard/products");
-
-  return {
-    success: true,
-    data,
-  };
+  return { success: true, data };
 }

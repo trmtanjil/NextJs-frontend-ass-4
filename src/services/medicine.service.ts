@@ -24,17 +24,15 @@ async function apiFetch<T>(
     if (!API_URL) throw new Error("API_URL is missing");
 
     const cookieStore = await cookies();
-    const token =
-      cookieStore.get("accessToken")?.value ??
-      cookieStore.get("token")?.value ??
-      null;
+    const cookieHeader = cookieStore
+      .getAll()
+      .map(c => `${c.name}=${c.value}`)
+      .join("; ");
+      console.log("coodie store ",cookieStore)
 
     const headers = new Headers(options.headers);
     headers.set("Content-Type", "application/json");
-
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
+    headers.set("Cookie", cookieHeader); // 🔥 THIS IS KEY
 
     const res = await fetch(`${API_URL}${endpoint}`, {
       ...options,
@@ -44,16 +42,10 @@ async function apiFetch<T>(
     const result = await res.json();
 
     if (!res.ok) {
-      return {
-        data: null,
-        error: result?.message ?? "Request failed",
-      };
+      return { data: null, error: result?.message ?? "Request failed" };
     }
 
-    return {
-      data: result.data ?? result,
-      error: null,
-    };
+    return { data: result.data ?? result, error: null };
   } catch (err) {
     return {
       data: null,
@@ -94,18 +86,15 @@ function buildQuery(params?: GetMedicinesParams) {
     return apiFetch<Medicine>(`/medicines/${id}`);
   },
 
-  create: async (
-    payload: Partial<Medicine>,
-    token: string
-  ): Promise<ServiceResult<Medicine>> => {
-    return apiFetch<Medicine>("/seller/medicines", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
-  },
+create: async (
+  payload: Partial<Medicine>
+): Promise<ServiceResult<Medicine>> => {
+  return apiFetch<Medicine>("/seller/medicines", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+},
+
 };
 
 export default medicineService;
