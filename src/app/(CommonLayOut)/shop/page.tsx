@@ -1,7 +1,8 @@
 import React from 'react'
+import AllProduct from '../allproduct/page'
 
 export default function page() {
   return (
-    <div className='bg-green-600'>shop page</div>
+    <AllProduct></AllProduct>
   )
 }

@@ -97,7 +97,7 @@ export const userService = {
           ? { revalidate: options.revalidate }
           : undefined,
       });
-
+console.log("Response Status:", res.status);
       return await handleResponse(res);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : "Failed to fetch users";

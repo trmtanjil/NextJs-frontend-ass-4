@@ -7,8 +7,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 
 export interface Meta {
-  // Meta তে id সাধারণত থাকে না, তবে তোমার API থেকে আসলে রাখতে পারো। 
-  // আমি টাইপ এরর এড়াতে এটাকে অপশনাল করে দিচ্ছি।
+   
   id?: string; 
   total: number;
   page: number;
