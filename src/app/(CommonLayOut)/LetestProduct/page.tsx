@@ -13,7 +13,7 @@ export default async function LetestProduct() {
   const latestMedicines = medicines.slice(0, 4);
 
   return (
-    <section className="py-16 bg-gray-50/50">
+    <section className="pb-16 pt-3 bg-gray-50/50">
       <div className="container mx-auto px-4">
         
         {/* হেডার সেকশন */}

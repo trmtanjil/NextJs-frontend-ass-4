@@ -43,7 +43,7 @@ export default function AllOrdersPage() {
   return (
     <div className="container mx-auto p-6 text-black">
       <h1 className="text-3xl font-bold mb-8 text-amber-600 flex items-center gap-2">
-        <ShoppingBasket /> All Orders
+        <ShoppingBasket /> Customer Orders
       </h1>
 
       <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
