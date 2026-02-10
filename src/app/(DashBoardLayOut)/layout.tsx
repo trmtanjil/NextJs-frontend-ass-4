@@ -17,6 +17,7 @@ import {
 import { Roles } from "@/constentse/roles";
 import { userService } from "@/services/user.service";
 import { AppSidebar } from "@/components/layout/app-sidebar";
+import DashboardLogo from "@/components/Sheared/DashboardLogo";
 
 export const dynamic = 'force-dynamic';
   
@@ -30,10 +31,11 @@ export default async function DashboardLayout({
   admin: React.ReactNode;
     customer: React.ReactNode;
       seller: React.ReactNode;
-}) {
-  const userData = await userService.getSession();
-  const userRole = userData?.data?.user?.role;
-  return (
+    }) {
+      const userData = await userService.getSession();
+      const userRole = userData?.data?.user?.role;
+      return (
+        <>
     <SidebarProvider>
       <AppSidebar user={userRole} />
       <SidebarInset>
@@ -42,7 +44,7 @@ export default async function DashboardLayout({
           <Separator
             orientation="vertical"
             className="mr-2 data-[orientation=vertical]:h-4"
-          />
+            />
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
@@ -69,5 +71,6 @@ export default async function DashboardLayout({
   
       </SidebarInset>
     </SidebarProvider>
+</>
   );
 }

@@ -16,6 +16,7 @@ import { Route } from "@/types/routes.type";
 import { adminRoutes } from "@/routes/adminRoutes";
 import { userRoutes } from "@/routes/customerRoutes";
 import { sellerRoutes } from "@/routes/sellerRoutes";
+import DashboardLogo from "../Sheared/DashboardLogo";
   
 export async function AppSidebar({
   user,
@@ -41,6 +42,7 @@ export async function AppSidebar({
 
   return (
     <Sidebar {...props}>
+      <DashboardLogo></DashboardLogo>
       <SidebarContent>
         {/* We create a SidebarGroup for each parent. */}
         {routes.map((item) => (
