@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import CategoryList from "./category/page";
 import Drpage from "./pages/page";
 import OurClientSay from "./pages/ourcliendSay";
+import LetestProduct from "./LetestProduct/page";
      
 export default async function Home() {
 
@@ -18,6 +19,9 @@ export default async function Home() {
       </div>
       <div>
         <CategoryList></CategoryList>
+      </div>
+      <div>
+        <LetestProduct></LetestProduct>
       </div>
      <Drpage></Drpage>
       <OurClientSay></OurClientSay>
