@@ -5,12 +5,9 @@ export const userRoutes: Route[] = [
   
   {
     
-    title: "Blog Management",
+    title: "Customer Dashboard",
     items: [
-      {
-        title: "Overview",
-        url: "/dashboard",
-      },
+  
       {
         title: "Profile",
         url: "/profile",

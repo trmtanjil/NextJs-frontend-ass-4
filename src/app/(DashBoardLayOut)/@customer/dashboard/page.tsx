@@ -1,6 +1,9 @@
- 
-export default function CustomerDashboard() {
+import React from 'react'
+
+export default function AdminDashboard({children}:{ children: React.ReactNode;}) {
   return (
-    <div>CustomerDashboard</div>
+    <div>this is AdminDashboard
+      {children}
+    </div>
   )
 }

@@ -62,3 +62,19 @@ export async function createMedicineAction(
   revalidatePath("/seller-dashboard/products");
   return { success: true, data };
 }
+
+
+
+export async function updateMedicineAction(
+  id: string,
+  payload: Partial<Medicine>
+) {
+  const { data, error } = await medicineService.update(id, payload);
+
+  if (error) {
+    return { success: false, message: error };
+  }
+
+  revalidatePath("/seller-dashboard/products");
+  return { success: true, data };
+}

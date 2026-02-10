@@ -96,6 +96,18 @@ create: async (
   });
 },
 
+
+update: async (
+  id: string,
+  payload: Partial<Medicine>
+): Promise<ServiceResult<Medicine>> => {
+  return apiFetch<Medicine>(`/seller/medicines/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+},
+
+
 };
 
 export default medicineService;

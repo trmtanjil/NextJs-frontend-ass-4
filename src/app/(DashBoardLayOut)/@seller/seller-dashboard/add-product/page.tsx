@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { createMedicineAction } from "@/action/medicine.actions";
 
-/* ===========================
+/*  
    Form Data Type (CLIENT)
-=========================== */
+ */
 interface MedicineFormData {
   name: string;
   price: number;
@@ -29,9 +29,9 @@ export default function SellerAdd() {
 
   const router = useRouter();
 
-  /* ===========================
+  /*  
      Submit Handler
-  =========================== */
+  */
   const onSubmit: SubmitHandler<MedicineFormData> = async (data) => {
     const payload = {
       name: data.name,
