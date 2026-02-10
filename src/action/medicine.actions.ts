@@ -78,3 +78,15 @@ export async function updateMedicineAction(
   revalidatePath("/seller-dashboard/products");
   return { success: true, data };
 }
+
+export async function deleteMedicineAction(id: string): Promise<ActionResponse<Medicine>> {
+  const { data, error } = await medicineService.delete(id);
+
+  if (error) {
+    return { success: false, message: error };
+  }
+
+  // ডিলিট হওয়ার পর পেজ রিভ্যালিডেট করবে যাতে টেবিল আপডেট হয়
+  revalidatePath("/seller-dashboard/products");
+  return { success: true, message: "Medicine deleted successfully" };
+}

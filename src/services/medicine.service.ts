@@ -108,6 +108,12 @@ update: async (
 },
 
 
+delete: async (id: string): Promise<ServiceResult<Medicine>> => {
+    return apiFetch<Medicine>(`/seller/medicines/${id}`, {
+      method: "DELETE",
+    });
+  },
+
 };
 
 export default medicineService;

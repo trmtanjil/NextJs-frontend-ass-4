@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { Medicine } from "@/types/medicine.type";
 import MedicineEditModal from "./editmedicin";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
  
 export default function MedicineTable({ medicines }: { medicines: Medicine[] }) {
   // এডিট করার জন্য স্টেট
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
+const [deletingMedicine, setDeletingMedicine] = useState<Medicine | null>(null);
 
   return (
     <div className="overflow-x-auto border rounded-lg relative">
@@ -40,7 +42,12 @@ export default function MedicineTable({ medicines }: { medicines: Medicine[] }) 
                 >
                   Edit
                 </button>
-                <button className="text-red-600 font-semibold hover:underline">Delete</button>
+            <button 
+                  onClick={() => setDeletingMedicine(item)} // এখানে ক্লিক করলে ডিলিট মডাল ওপেন হবে
+                  className="text-red-600 font-semibold hover:underline"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
@@ -52,6 +59,14 @@ export default function MedicineTable({ medicines }: { medicines: Medicine[] }) 
         <MedicineEditModal 
           medicine={selectedMedicine} 
           onClose={() => setSelectedMedicine(null)} 
+        />
+      )}
+
+      {deletingMedicine && (
+        <DeleteConfirmationModal 
+          medicineId={deletingMedicine.id} 
+          medicineName={deletingMedicine.name} 
+          onClose={() => setDeletingMedicine(null)} 
         />
       )}
     </div>

@@ -38,6 +38,7 @@ const Navbar = ({ className }: { className?: string }) => {
 const menu = [
   { title: "Home", url: "/" },
   { title: "About", url: "/about" },
+    { title: "All Product", url: "/allproduct" },
   // শুধু লগইন থাকলে দেখাবে
   ...(session ? [
     { title: "Cart", url: "/card" },
