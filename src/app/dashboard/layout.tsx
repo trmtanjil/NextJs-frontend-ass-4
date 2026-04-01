@@ -17,7 +17,7 @@ import {
 import { Roles } from "@/constentse/roles";
 import { userService } from "@/services/user.service";
 import { AppSidebar } from "@/components/layout/app-sidebar";
- 
+  
 export const dynamic = 'force-dynamic';
   
 export default async function DashboardLayout({
@@ -59,13 +59,9 @@ export default async function DashboardLayout({
           </Breadcrumb>
         </header>
            <div className="flex flex-1 flex-col gap-4 p-4">
-{userRole=== Roles.admin
-  ? admin
-  : userRole === Roles.customer
-  ? customer
-  : userRole === Roles.seller
-  ? seller
-  : null}
+          {userRole === Roles.admin && admin}
+          {userRole === Roles.customer && customer}
+          {userRole === Roles.seller && seller}
         </div>
   
       </SidebarInset>

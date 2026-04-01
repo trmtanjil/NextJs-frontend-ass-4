@@ -416,7 +416,7 @@ function SidebarGroupLabel({
         className
       )}
       {...props}
-    />
+     />
   )
 }
 

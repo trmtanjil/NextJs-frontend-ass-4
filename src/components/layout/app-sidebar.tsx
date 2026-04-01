@@ -22,18 +22,18 @@ export async function AppSidebar({
   user,
   ...props
 }: {
-  user?: "ADMIN" | "CUSTOMER" | "SELLER";
+  user?: "admin" | "customer" | "seller";
 } & React.ComponentProps<typeof Sidebar>) {
   let routes: Route[] = [];
 
   switch (user) {
-    case "ADMIN":
+    case "admin":
       routes = adminRoutes;
       break;
-    case "CUSTOMER":
+    case "customer":
       routes = userRoutes;
       break;
-    case "SELLER":
+    case "seller":
       routes = sellerRoutes;
       break;
     default:
@@ -47,7 +47,7 @@ export async function AppSidebar({
         {/* We create a SidebarGroup for each parent. */}
         {routes.map((item) => (
           <SidebarGroup key={item.title}>
-            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+             <SidebarGroupLabel>{item.title} </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {item.items.map((item) => (
