@@ -78,7 +78,7 @@ function buildQuery(params?: GetMedicinesParams) {
  const medicineService = {
   getAll: async (params?: GetMedicinesParams) => {
     const query = buildQuery(params);
-    const endpoint = query ? `/medicines?${query}` : "/medicines";
+    const endpoint = query ? `/medicines?${query}` : "/medicines"; 
     return apiFetch<Medicine[]>(endpoint);
   },
 
