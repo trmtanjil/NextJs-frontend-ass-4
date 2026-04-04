@@ -1,6 +1,8 @@
  
-export default function page() {
+export default function page({clildren}:{ children: React.ReactNode;}) {
   return (
-    <div>admin deshboard page</div>
+    <div>admin deshboard page
+      {clildren}
+    </div>
   )
 }
