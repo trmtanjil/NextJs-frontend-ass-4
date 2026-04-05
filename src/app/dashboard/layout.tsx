@@ -59,9 +59,9 @@ export default async function DashboardLayout({
           </Breadcrumb>
         </header>
            <div className="flex flex-1 flex-col gap-4 p-4">
-          {userRole === Roles.admin && admin}
-          {userRole === Roles.customer && customer}
-          {userRole === Roles.seller && seller}
+          {userRole === Roles.ADMIN && admin}
+          {userRole === Roles.CUSTOMER && customer}
+          {userRole === Roles.SELLER && seller}
         </div>
   
       </SidebarInset>

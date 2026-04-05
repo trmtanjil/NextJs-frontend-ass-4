@@ -17,23 +17,27 @@ import { adminRoutes } from "@/routes/adminRoutes";
 import { userRoutes } from "@/routes/customerRoutes";
 import { sellerRoutes } from "@/routes/sellerRoutes";
 import DashboardLogo from "../Sheared/DashboardLogo";
+import { normalizeDashboardRole, type DashboardRole, Roles } from "@/constentse/roles";
   
 export async function AppSidebar({
   user,
+  sessionError = false,
   ...props
 }: {
-  user?: "admin" | "customer" | "seller";
+  user?: DashboardRole | string;
+  sessionError?: boolean;
 } & React.ComponentProps<typeof Sidebar>) {
   let routes: Route[] = [];
 
-  switch (user) {
-    case "admin":
+  const normalizedUser = normalizeDashboardRole(user);
+  switch (normalizedUser) {
+    case Roles.ADMIN:
       routes = adminRoutes;
       break;
-    case "customer":
+    case Roles.CUSTOMER:
       routes = userRoutes;
       break;
-    case "seller":
+    case Roles.SELLER:
       routes = sellerRoutes;
       break;
     default:
@@ -61,6 +65,22 @@ export async function AppSidebar({
             </SidebarGroupContent>
           </SidebarGroup>
         ))}
+        {routes.length === 0 && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <div className="rounded-md border border-dashed px-3 py-3 text-sm text-muted-foreground">
+                    {sessionError
+                      ? "Session service is unavailable, so dashboard navigation could not be loaded."
+                      : "No dashboard navigation is available for this account yet."}
+                  </div>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
       <SidebarRail />
     </Sidebar>

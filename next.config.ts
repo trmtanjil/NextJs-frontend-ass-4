@@ -14,7 +14,7 @@ const config: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "https://medicareshope.vercel.app/api/:path*",
+        destination: "http://localhost:5000/api/:path*",
       },
     ]
   },
