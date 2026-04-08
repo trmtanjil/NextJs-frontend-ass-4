@@ -3,67 +3,98 @@ import { Pill } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Medicine } from "@/types/medicine.type";
-
-export default async function AllProduct() {
-  // সার্ভার অ্যাকশন থেকে ডাটা ফেচ করা
+import MedicineFilter from "../MedicineFilter/MedicineFilter";
+ 
+export default async function AllProduct({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string; category?: string; price?: string }>;
+}) {
+  const query = await searchParams;
+  
+  // ১. সব ডাটা ফেচ করা
   const response = await getAllMedicinesAction();
-  const medicines: Medicine[] = response.data || [];
+  let medicines: Medicine[] = response.data || [];
+
+  // ইউনিক ক্যাটাগরি লিস্ট তৈরি করা (ফিল্টার ড্রপডাউনের জন্য)
+  const categories = Array.from(
+    new Set(medicines.map((m) => m.category?.name).filter(Boolean))
+  ) as string[];
+
+  // ২. ফিল্টারিং লজিক (Client থেকে আসা Query অনুযায়ী)
+  if (query.search) {
+    medicines = medicines.filter((m) =>
+      m.name.toLowerCase().includes(query.search!.toLowerCase())
+    );
+  }
+
+  if (query.category) {
+    medicines = medicines.filter((m) => m.category?.name === query.category);
+  }
+
+  if (query.price) {
+    medicines = medicines.filter((m) => m.price <= Number(query.price));
+  }
 
   return (
-    <div className="container mx-auto p-6">
-      {/* হেডার সেকশন */}
-      <div className="mb-8 border-b pb-6">
-        <h1 className="text-3xl font-bold capitalize text-amber-500">
-          Available <span className="text-black">Medicines</span>
+    <div className="container mx-auto p-6 bg-gray-50/50 min-h-screen">
+      {/* হেডার */}
+      <div className="mb-8">
+        <h1 className="text-4xl font-extrabold text-gray-900">
+          Available <span className="text-green-600">Medicines</span>
         </h1>
-        <p className="text-gray-500 mt-2">
-          Found <span className="font-bold text-black">{medicines.length}</span> items in our store.
+        <p className="text-gray-500 mt-2 text-lg">
+          Explore our wide range of authentic healthcare products.
         </p>
       </div>
 
+      {/* ফিল্টার সেকশন */}
+      <MedicineFilter categories={categories} />
+
       {/* প্রোডাক্ট গ্রিড */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {medicines.length > 0 ? (
           medicines.map((med: Medicine) => (
-            <div key={med.id} className="border rounded-2xl p-4 shadow-sm hover:shadow-lg transition-all bg-white group flex flex-col">
+            <div key={med.id} className="border-none rounded-3xl p-5 shadow-sm hover:shadow-xl transition-all bg-white group flex flex-col relative">
               
-              {/* ইমেজ সেকশন - সরাসরি সার্ভার থেকে আসা URL ব্যবহার */}
-              <div className="h-48 bg-gray-50 rounded-xl mb-4 flex items-center justify-center relative overflow-hidden border border-gray-100">
+              {/* স্টোক ব্যাজ */}
+              <div className="absolute top-4 right-4 z-10">
+                <span className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase ${med.stock > 0 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                  {med.stock > 0 ? `In Stock: ${med.stock}` : 'Out of Stock'}
+                </span>
+              </div>
+
+              {/* ইমেজ */}
+              <div className="h-44 bg-gray-50 rounded-2xl mb-5 flex items-center justify-center relative overflow-hidden group-hover:bg-green-50/30 transition-colors">
                  {med.image ? (
                    <img 
                     src={med.image} 
                     alt={med.name} 
-                    className="object-contain w-full h-full p-2 group-hover:scale-110 transition-transform duration-300" 
+                    className="object-contain w-full h-full p-4 group-hover:scale-110 transition-transform duration-500" 
                    />
                  ) : (
-                   <div className="flex flex-col items-center text-gray-400">
-                     <Pill size={40} className="mb-2 opacity-20" />
-                     <span className="text-xs">No Image</span>
-                   </div>
+                   <Pill size={48} className="text-gray-200" />
                  )}
-                 
-                 <div className="absolute top-2 left-2 bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase">
-                   Stock: {med.stock}
-                 </div>
               </div>
 
-              {/* ইনফরমেশন সেকশন */}
-              <div className="space-y-1 flex-grow">
-                <h3 className="font-bold text-lg text-gray-800 truncate" title={med.name}>
+              {/* ইনফরমেশন */}
+              <div className="flex-grow space-y-2">
+                <p className="text-xs font-bold text-green-600 uppercase tracking-widest">
+                  {med.category?.name || "General"}
+                </p>
+                <h3 className="font-bold text-xl text-gray-800 leading-tight truncate" title={med.name}>
                   {med.name}
                 </h3>
-                <p className="text-xs text-gray-400 uppercase tracking-wider">
-                   {med.category?.name || "General"}
-                </p>
-                <div className="flex items-center justify-between mt-2">
-                  <p className="text-amber-600 font-black text-2xl">${med.price}</p>
+                <div className="flex items-baseline gap-1">
+                   <span className="text-2xl font-black text-gray-900">${med.price}</span>
+                   <span className="text-xs text-gray-400">/ per unit</span>
                 </div>
               </div>
               
-              {/* শুধুমাত্র ভিউ ডিটেইলস বাটন */}
-              <div className="mt-4">
-                <Link href={`/allmadicin/${med.id}`} className="w-full">
-                  <Button variant="outline" className="w-full border-amber-500 text-amber-600 hover:bg-amber-500 hover:text-white rounded-xl font-bold transition-colors">
+              {/* অ্যাকশন বাটন */}
+              <div className="mt-6">
+                <Link href={`/allmadicin/${med.id}`}>
+                  <Button className="w-full bg-gray-900 hover:bg-green-600 text-white rounded-2xl py-6 font-bold transition-all shadow-lg hover:shadow-green-200">
                     View Details
                   </Button>
                 </Link>
@@ -71,13 +102,14 @@ export default async function AllProduct() {
             </div>
           ))
         ) : (
-          /* Empty State */
-          <div className="col-span-full text-center py-24 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-            <div className="max-w-xs mx-auto">
-              <Pill className="mx-auto text-gray-300 mb-4" size={48} />
-              <p className="text-xl font-semibold text-gray-600">No medicines found!</p>
-              <p className="text-gray-400 text-sm mt-2">We couldnt find any products in the store right now.</p>
-            </div>
+          <div className="col-span-full text-center py-32 bg-white rounded-3xl border border-gray-100 shadow-sm">
+             <div className="max-w-xs mx-auto">
+               <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                 <Pill className="text-gray-300" size={40} />
+               </div>
+               <h3 className="text-2xl font-bold text-gray-800">No results found</h3>
+               <p className="text-gray-500 mt-2">Try adjusting your filters or search keywords.</p>
+             </div>
           </div>
         )}
       </div>
