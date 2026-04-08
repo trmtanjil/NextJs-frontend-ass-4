@@ -10,13 +10,14 @@ export const userRoutes: Route[] = [
   
       {
         title: "Profile",
-        url: "profile",
+        url: "/profile",
       },
       {
         title: "Orders",
-        url: "orders",
+        url: "/orders",
       },
-        { title: "Card", url: "card" },
+        { title: "Card", url: "/card" },
+        { title: "Apply For Seller", url: "/applyseller" },
     ],
   },
 ];
