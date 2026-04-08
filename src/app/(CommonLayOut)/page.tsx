@@ -5,6 +5,7 @@ import CategoryList from "./category/page";
 import Drpage from "./pages/page";
 import OurClientSay from "./pages/ourcliendSay";
 import LetestProduct from "./LetestProduct/page";
+import UserSay from "./usersay/usersay";
      
 export default async function Home() {
 
@@ -24,7 +25,8 @@ export default async function Home() {
         <LetestProduct></LetestProduct>
       </div>
      <Drpage></Drpage>
-      <OurClientSay></OurClientSay>
+     <UserSay></UserSay>
+      {/* <OurClientSay></OurClientSay> */}
       
     </div>
   );

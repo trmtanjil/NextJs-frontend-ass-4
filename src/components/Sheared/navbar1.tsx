@@ -39,6 +39,7 @@ const menu = [
   { title: "Home", url: "/" },
   { title: "About", url: "/about" },
     { title: "All Product", url: "/allproduct" },
+    { title: "Contuct us", url: "/contacsection" },
   // শুধু লগইন থাকলে দেখাবে
   ...(session ? [
     { title: "Cart", url: "/card" },
@@ -47,7 +48,7 @@ const menu = [
 ];
 
   return (
-    <section className={cn("py-4 border-b", className)}>
+    <section className={cn("py-4 border-b sticky top-0 z-50 bg-background/80 backdrop-blur-md", className)} >
       <div className="container mx-auto px-4">
         <nav className="flex items-center justify-between">
           <div className="flex items-center gap-6">
