@@ -2,7 +2,7 @@ import React from "react";
 
 function Drpage() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10">
+    <div className=" px-[5%]  mx-auto px-4 py-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Left Card */}

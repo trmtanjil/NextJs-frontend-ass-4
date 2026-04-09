@@ -6,7 +6,7 @@ export default async function CategoryList() {
 
   if (error) {
     return (
-      <div className="text-center py-20 text-red-500 bg-red-50 rounded-2xl max-w-2xl mx-auto">
+      <div className="text-center py-20 text-red-500 bg-red-50 rounded-2xl   mx-auto">
         <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
           <span className="text-2xl">⚠️</span>
         </div>
@@ -16,7 +16,7 @@ export default async function CategoryList() {
   }
 
   return (
-    <section className="py-16 container mx-auto px-4">
+    <section className="py-16  px-[5%]  mx-auto px-4">
       {/* Header Section */}
       <div className="text-center mb-12">
         <div className="inline-flex items-center justify-center mb-4">

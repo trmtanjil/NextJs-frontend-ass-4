@@ -13,8 +13,8 @@ export default async function LetestProduct() {
   const latestMedicines = medicines.slice(0, 4);
 
   return (
-    <section className="pb-16 pt-3 bg-gray-50/50">
-      <div className="container mx-auto px-4">
+    <section className="pb-16 px-[5%] pt-3 bg-gray-50/50">
+      <div className=" mx-auto px-4">
         
         {/* হেডার সেকশন */}
         <div className="flex items-end justify-between mb-10">

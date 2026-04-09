@@ -25,7 +25,7 @@ export function MedicineCard({ medicine }: { medicine: Medicine }) {
     : medicine.price;
 
   return (
-    <Card className="group overflow-hidden border-0 shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-gradient-to-br from-white to-gray-50/50">
+    <Card className="group overflow-hidden w-full border-0 shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-gradient-to-br from-white to-gray-50/50">
       {/* Image Section with Overlay */}
       <div className="relative h-56 bg-gradient-to-br from-blue-50 to-cyan-50 overflow-hidden">
         {medicine.image ? (

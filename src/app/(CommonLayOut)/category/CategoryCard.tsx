@@ -23,16 +23,16 @@ export function CategoryCard({ id, name, itemCount = 42 }: CategoryCardProps) {
 
   return (
     <Link href={`/shop/${id}`}>
-      <Card className="group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer bg-gradient-to-br from-white to-gray-50/50">
+      <Card className="group w-full relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer bg-gradient-to-br from-white to-gray-50/50">
         {/* Animated Background Gradient */}
-        <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 bg-gradient-to-br ${gradientClass} transition-opacity duration-500`}></div>
+        <div className={`absolute inset-0 opacity-0 group-hover:opacity-10  w-full bg-gradient-to-br ${gradientClass} transition-opacity duration-500`}></div>
         
         {/* Corner Accent */}
-        <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden">
+        <div className="absolute top-0 right-0 m-w-7xl overflow-hidden">
           <div className={`absolute top-0 right-0 w-32 h-32 rotate-45 translate-x-1/2 -translate-y-1/2 bg-gradient-to-br ${gradientClass} opacity-10 group-hover:opacity-20 transition-opacity duration-500`}></div>
         </div>
 
-        <CardContent className="p-6 flex flex-col items-center justify-center h-full">
+        <CardContent className="p-6 flex flex-col items-center justify-center w-full h-full">
           {/* Icon Container with Gradient */}
           <div className={`relative mb-6 p-5 rounded-2xl bg-gradient-to-br ${gradientClass} shadow-lg group-hover:shadow-xl transition-all duration-500 group-hover:scale-110`}>
             <LayoutGrid className="w-8 h-8 text-white" />

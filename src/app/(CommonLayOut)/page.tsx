@@ -6,7 +6,8 @@ import Drpage from "./pages/page";
 import OurClientSay from "./pages/ourcliendSay";
 import LetestProduct from "./LetestProduct/page";
 import UserSay from "./usersay/usersay";
-     
+import HowItWorks from "./howtowork/howtowork";
+       
 export default async function Home() {
 
    const {data} = await userService.getSession()
@@ -25,7 +26,8 @@ export default async function Home() {
         <LetestProduct></LetestProduct>
       </div>
      <Drpage></Drpage>
-     <UserSay></UserSay>
+      <UserSay></UserSay>
+      <HowItWorks></HowItWorks> 
       {/* <OurClientSay></OurClientSay> */}
       
     </div>

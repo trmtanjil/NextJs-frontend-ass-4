@@ -37,7 +37,7 @@ export default async function AllProduct({
   }
 
   return (
-    <div className="container mx-auto p-6 bg-gray-50/50 min-h-screen">
+    <div className="  mx-auto p-6 bg-gray-50/50 min-h-screen">
       {/* হেডার */}
       <div className="mb-8">
         <h1 className="text-4xl font-extrabold text-gray-900">
