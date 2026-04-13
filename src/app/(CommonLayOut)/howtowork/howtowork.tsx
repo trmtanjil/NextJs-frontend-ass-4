@@ -42,7 +42,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <div className="bg-gray-50 min-h-screen py-16 px-6 font-sans">
+    <div className="bg-gray-50     pb-10 px-6 font-sans">
       <div className="max-w-7xl mx-auto">
         
         {/* Header Section */}
@@ -59,13 +59,13 @@ export default function HowItWorks() {
         </div>
 
         {/* Steps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-10">
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
               <div 
                 key={index} 
-                className={`bg-white p-10 rounded-[2.5rem] shadow-xl border border-gray-100 flex flex-col items-center text-center transition-all duration-500 ease-in-out transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-green-100/30 group animate-fade-in`}
+                className={`bg-white p-10   rounded-[2.5rem] shadow-xl border border-gray-100 flex flex-col items-center text-center transition-all duration-500 ease-in-out transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-green-100/30 group animate-fade-in`}
                 style={{ animationDelay: `${index * 150}ms` }}
               >
                 {/* Step Number */}
@@ -74,7 +74,7 @@ export default function HowItWorks() {
                 </span>
 
                 {/* Icon Container */}
-                <div className={`w-28 h-28 ${step.bgColor} ${step.iconColor} rounded-[2rem] flex items-center justify-center mb-10 shadow-inner group-hover:scale-110 transition-transform duration-300`}>
+                <div className={`w-10 h-10 ${step.bgColor} ${step.iconColor} rounded-[2rem] flex items-center justify-center mb-10 shadow-inner group-hover:scale-110 transition-transform duration-300`}>
                   <Icon size={48} />
                 </div>
 

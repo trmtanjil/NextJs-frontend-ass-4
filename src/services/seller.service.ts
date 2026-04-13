@@ -14,7 +14,7 @@ export interface ServiceResult<T> {
 /*  
    Generic Fetch
  */
-async function apiFetch<T>(
+ export async function apiFetch<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ServiceResult<T>> {
